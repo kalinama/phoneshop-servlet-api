@@ -15,79 +15,81 @@ import static org.junit.Assert.*;
 public class ArrayListProductDaoTest
 {
     private ProductDao productDao;
+    private List<Product> testProductList;
     private Currency usd = Currency.getInstance("USD");
 
     @Before
     public void setup() {
-        productDao = new ArrayListProductDao(true);
+        testProductList = new ArrayList<>();
+        testProductList.add(new Product(1L,"sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
+        testProductList.add(new Product(2L,"sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));
+        testProductList.add(new Product(3L,"sgs3", "Samsung Galaxy S III", new BigDecimal(300), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20III.jpg"));
+        testProductList.add(new Product(4L,"iphone", "Apple iPhone", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"));
+        testProductList.add(new Product(5L,"iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg"));
+        productDao = new ArrayListProductDao(testProductList);
     }
 
     @Test
-    public void testInitListWithSampleProducts() {
+    public void testSetUpDao() {
         assertFalse(productDao.findProducts().isEmpty());
     }
 
     @Test
-    public void testGetProductById() throws ProductNotFoundException {
-        productDao.save(new Product(1L,"sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
-        Product product = productDao.getProduct(1L);
+    public void testGetProductByExistedId() throws ProductNotFoundException {
+        Product testProduct = testProductList.get(0);
+        Product result = productDao.getProduct(testProduct.getId());
 
-        assertEquals(1, (long) product.getId());
+        assertEquals(testProduct, result);
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void testGetProductByNotExistedId() throws ProductNotFoundException {
+        long notExistedId = 155;
+        productDao.getProduct(notExistedId);
     }
 
     @Test
-    public void testFindProducts()  {
-        ProductDao productDaoRenew = new ArrayListProductDao(false);
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
-        productList.add(new Product("sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 54, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));
-        productList.add(new Product("sgs3", "Samsung Galaxy S III", new BigDecimal(300), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20III.jpg"));
+    public void testFindProductsWithSpecialConditions()  { // non null price and stock level > 0
+        List<Product> result = productDao.findProducts();
 
-        for(Product product: productList)
-            productDaoRenew.save(product);
-
-        List<Product> checkedProductList = productDaoRenew.findProducts();
-
-        assertArrayEquals(productList.toArray(), checkedProductList.toArray());
+        assertArrayEquals(testProductList.toArray(), result.toArray());
     }
 
     @Test
     public void testSaveProductWithoutId() throws ProductNotFoundException {
         Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         productDao.save(product);
+
         assertNotNull(product.getId());
         assertEquals(product, productDao.getProduct(product.getId()));
-
+        assertEquals(testProductList.size()+1, productDao.findProducts().size());
     }
 
     @Test
     public void testSaveProductWithExistedId() throws ProductNotFoundException {
-        productDao = new ArrayListProductDao(false);
-        productDao.save(new Product(51L,"nokia3310", "Nokia 3310", new BigDecimal(70), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Nokia/Nokia%203310.jpg"));
+        long existedId = testProductList.get(0).getId();
+        Product product = new Product(existedId, "xperiaxz", "Sony Xperia XZ", new BigDecimal(120), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Sony/Sony%20Xperia%20XZ.jpg");
+        productDao.save(product);
 
-        Product resultProduct = new Product(51L, "xperiaxz", "Sony Xperia XZ", new BigDecimal(120), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Sony/Sony%20Xperia%20XZ.jpg");
-        productDao.save(resultProduct);
-        assertEquals(productDao.getProduct(51L), resultProduct);
+        assertEquals(product, productDao.getProduct(existedId));
+        assertEquals(testProductList.size(), productDao.findProducts().size());
     }
 
     @Test
     public void testSaveProductWithNotExistedId() throws ProductNotFoundException {
-        ProductDao productDaoRenew = new ArrayListProductDao(false);
-        Product resultProduct = new Product(13L, "xperiaxz", "Sony Xperia XZ", new BigDecimal(120), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Sony/Sony%20Xperia%20XZ.jpg");
-        productDaoRenew.save(resultProduct);
-        assertEquals(productDaoRenew.getProduct(13L), resultProduct);
+        long notExistedId = 199;
+        Product product = new Product(notExistedId, "xperiaxz", "Sony Xperia XZ", new BigDecimal(120), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Sony/Sony%20Xperia%20XZ.jpg");
+        productDao.save(product);
+
+        assertEquals(product, productDao.getProduct(notExistedId));
+        assertEquals(testProductList.size()+1, productDao.findProducts().size());
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
-    @Test
+    @Test(expected = ProductNotFoundException.class)
     public void testDeleteProductById() throws ProductNotFoundException {
-        productDao = new ArrayListProductDao(false);
-        Product resultProduct = new Product(13L, "xperiaxz", "Sony Xperia XZ", new BigDecimal(120), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Sony/Sony%20Xperia%20XZ.jpg");
-        productDao.save(resultProduct);
-        productDao.delete(13L);
-        exception.expect(ProductNotFoundException.class);
-        productDao.getProduct(13L);
+        long idOfRemovableProduct = testProductList.get(0).getId();
+        productDao.delete(idOfRemovableProduct);
+        productDao.getProduct(idOfRemovableProduct);
     }
+
 }

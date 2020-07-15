@@ -17,17 +17,21 @@ public class ArrayListProductDao implements ProductDao {
 
     public ArrayListProductDao() { products = new ArrayList<>();}
 
+    ArrayListProductDao(List<Product> initProductList) {
+        products = new ArrayList<>();
+        for(Product product: initProductList)
+            save(product);
+    }
+
     public ArrayListProductDao(boolean initWithSampleProducts)
     {
         products = new ArrayList<>();
         if (initWithSampleProducts)
             addSampleProducts();
-
     }
 
     @Override
     public Product getProduct(Long id) throws ProductNotFoundException {
-
         lock.readLock().lock();
         try {
             return products.stream()
@@ -38,7 +42,6 @@ public class ArrayListProductDao implements ProductDao {
         finally {
             lock.readLock().unlock();
         }
-
     }
 
     @Override
@@ -57,17 +60,17 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public void save(Product product) {
-
         lock.writeLock().lock();
         try {
             if (product.getId()!=null) {
-                try {
-                    delete(product.getId()); // if product with such id is already existed - replace with new
-                }
-                catch (ProductNotFoundException e) {
-                    if (idMaxValue < product.getId())
-                        idMaxValue = product.getId();
-                }
+
+                products.stream()
+                        .filter(existedProduct -> existedProduct.getId().equals(product.getId()))
+                        .findAny()
+                        .ifPresent(productWithSameId -> products.remove(productWithSameId));
+
+                if (idMaxValue < product.getId())
+                    idMaxValue = product.getId();
             }
             else product.setId(++idMaxValue);
             products.add(product);
@@ -77,10 +80,13 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public void delete(Long id) throws ProductNotFoundException {
+    public void delete(Long id) {
         lock.writeLock().lock();
         try {
-            products.remove(getProduct(id));
+           products.stream()
+                   .filter(product -> product.getId().equals(id))
+                   .findAny()
+                   .ifPresent(productToRemove -> products.remove(productToRemove));
         }
         finally {
             lock.writeLock().unlock();
