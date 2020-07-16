@@ -1,9 +1,8 @@
 package com.es.phoneshop.model.product;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
@@ -45,17 +44,35 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts() {
+    public List<Product> findProducts(String query) {
         lock.readLock().lock();
+
         try {
             return products.stream()
+                    .filter(product -> query==null || query.isEmpty() || isProductMatchedQuery(product, query))
                     .filter(product -> product.getPrice() != null)
                     .filter(product -> product.getStock() > 0)
+                    .sorted(Comparator.comparingInt((Product product) ->  ( query != null && !query.isEmpty()
+                            ? getQueryMatchRate(product,query) : 0))
+                            .reversed())
                     .collect(Collectors.toList());
         }
         finally {
             lock.readLock().unlock();
         }
+    }
+
+    private boolean isProductMatchedQuery(Product product, String query) {
+       final String separator = " ";
+       return Arrays.stream(product.getDescription().split(separator))
+                .anyMatch(wordFromDescription-> Arrays.stream(query.split(separator)).anyMatch(wordFromDescription::contains));
+
+    }
+
+    private int getQueryMatchRate(Product product, String query){
+        return (int) Arrays.stream(query.split(" "))
+                .filter(wordFromQuery -> product.getDescription().contains(wordFromQuery))
+                .count();
     }
 
     @Override
