@@ -44,22 +44,39 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findProducts(String query) {
+    public List<Product> findProducts(String query, SortParameter sortParameter, SortOrder sortOrder) {
         lock.readLock().lock();
 
         try {
+            Comparator<Product> comparator = getComparatorForProductList(query,sortParameter,sortOrder);
+
             return products.stream()
                     .filter(product -> query==null || query.isEmpty() || isProductMatchedQuery(product, query))
                     .filter(product -> product.getPrice() != null)
                     .filter(product -> product.getStock() > 0)
-                    .sorted(Comparator.comparingInt((Product product) ->  ( query != null && !query.isEmpty()
-                            ? getQueryMatchRate(product,query) : 0))
-                            .reversed())
+                    .sorted(comparator)
                     .collect(Collectors.toList());
         }
         finally {
             lock.readLock().unlock();
         }
+    }
+
+    private Comparator<Product> getComparatorForProductList(String query, SortParameter sortParameter, SortOrder sortOrder){
+        Comparator<Product> comparator = Comparator.comparing((Product product) -> ( query != null && !query.isEmpty()
+                ? getQueryMatchRate(product, query) : 0))
+                .reversed();
+
+        if(sortParameter == SortParameter.description)
+            comparator = Comparator.comparing(Product::getDescription);
+
+        if (sortParameter == SortParameter.price)
+            comparator = Comparator.comparing(Product::getPrice);
+
+        if (sortOrder == SortOrder.desc)
+            comparator = comparator.reversed();
+
+        return comparator;
     }
 
     private boolean isProductMatchedQuery(Product product, String query) {
@@ -69,10 +86,11 @@ public class ArrayListProductDao implements ProductDao {
 
     }
 
-    private int getQueryMatchRate(Product product, String query){
-        return (int) Arrays.stream(query.split(" "))
+    private double getQueryMatchRate(Product product, String query){
+        final String separator = " ";
+        return (double) Arrays.stream(query.split(separator))
                 .filter(wordFromQuery -> product.getDescription().contains(wordFromQuery))
-                .count();
+                .count() / product.getDescription().split(separator).length;
     }
 
     @Override
