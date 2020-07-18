@@ -17,7 +17,11 @@
       </tr>
       <tr>
         <td>Price</td>
-        <td><fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/></td>
+        <td>
+            <a href="${pageContext.servletContext.contextPath}/products/${product.id}/price-history">
+                <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+            </a>
+        </td>
       </tr>
     </thead>
   </table>
