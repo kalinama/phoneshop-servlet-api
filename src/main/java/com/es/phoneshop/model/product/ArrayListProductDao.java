@@ -16,12 +16,6 @@ public class ArrayListProductDao implements ProductDao {
 
     private ArrayListProductDao() { products = new ArrayList<>();}
 
-    private ArrayListProductDao(List<Product> initProductList) {
-        products = new ArrayList<>();
-        for(Product product: initProductList)
-            save(product);
-    }
-
     public static synchronized ProductDao getInstance()
     {
         if (instance == null)

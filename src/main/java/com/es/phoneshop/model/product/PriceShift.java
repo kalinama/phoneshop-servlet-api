@@ -10,7 +10,7 @@ public class PriceShift {
     private Currency currency;
     private LocalDate startDate;
 
-    PriceShift(BigDecimal price, Currency currency, LocalDate startDate)
+    public PriceShift(BigDecimal price, Currency currency, LocalDate startDate)
     {
         this.price = price;
         this.currency = currency;

@@ -1,12 +1,14 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.model.product.PriceShift;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -18,15 +20,38 @@ public class ProductDemoDataServletContextListener implements ServletContextList
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         boolean insertDemoData = Boolean.valueOf(servletContextEvent.getServletContext().getInitParameter("insertDemoData"));
+
         if(insertDemoData) {
             productDao = ArrayListProductDao.getInstance();
-            getSampleProducts().forEach(product -> productDao.save(product));
+
+            for (Product product: getSampleProducts()) {
+                product.setPriceHistory(getSamplePriceHistory(product));
+                productDao.save(product);
+            }
+
         }
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
 
+    }
+
+    private List<PriceShift> getSamplePriceHistory(Product product)
+    {
+        List<PriceShift> samplePriceHistory = new ArrayList<>();
+        Currency usd = Currency.getInstance("USD");
+        samplePriceHistory.add(new PriceShift(new BigDecimal(100), usd, LocalDate.of(2010, 4,12) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(130), usd, LocalDate.of(2010, 8,23) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(133), usd, LocalDate.of(2010, 11,2) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(155), usd, LocalDate.of(2010, 4,11) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(123), usd, LocalDate.of(2011, 8,12) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(150), usd, LocalDate.of(2015, 3,28) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(155), usd, LocalDate.of(2016, 10,8) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(158), usd, LocalDate.of(2018, 5,27) ));
+        samplePriceHistory.add(new PriceShift(new BigDecimal(166), usd, LocalDate.of(2019, 2,4) ));
+        samplePriceHistory.add(new PriceShift(product.getPrice(), product.getCurrency(), LocalDate.now() ));
+        return samplePriceHistory;
     }
 
     private List<Product> getSampleProducts(){
