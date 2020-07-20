@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public class ArrayListProductDao implements ProductDao {
 
     private static final String SEPARATOR = " ";
-    private static ProductDao instance;
 
     private List<Product> products;
     private long idMaxValue;
@@ -16,11 +15,12 @@ public class ArrayListProductDao implements ProductDao {
 
     private ArrayListProductDao() { products = new ArrayList<>();}
 
-    public static synchronized ProductDao getInstance()
-    {
-        if (instance == null)
-            instance = new ArrayListProductDao();
-        return instance;
+    public static class ArrayListProductDaoHolder {
+        public static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
+    }
+
+    public static ProductDao getInstance() {
+        return ArrayListProductDaoHolder.HOLDER_INSTANCE;
     }
 
     @Override

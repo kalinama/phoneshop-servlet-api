@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.Objects;
 
 public class Product {
     private Long id;
@@ -107,4 +108,25 @@ public class Product {
     }
 
     public void setPriceHistory(List<PriceShift> priceHistory) { this.priceHistory = priceHistory;}
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == this)
+            return true;
+
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
+
+        Product product = (Product) obj;
+
+        return Objects.equals(id, product.id)
+                && Objects.equals(code, product.code)
+                && Objects.equals(description, product.description)
+                && Objects.equals(price, product.price)
+                && Objects.equals(currency, product.currency)
+                && Objects.equals(stock, product.stock)
+                && Objects.equals(imageUrl, product.imageUrl);
+    }
+
 }

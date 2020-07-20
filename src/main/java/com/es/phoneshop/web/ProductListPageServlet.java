@@ -31,4 +31,5 @@ public class ProductListPageServlet extends HttpServlet {
         super.init(config);
         productsDao = ArrayListProductDao.getInstance();
     }
+
 }
