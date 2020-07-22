@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 public class ProductDetailsPageServlet extends HttpServlet {
 
-    private ProductDao productsDao;
+    private ProductDao productDao;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -23,7 +23,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         if (showPriceHistory)
         pathInfo = Arrays.asList(request.getPathInfo().split("/price-history")).get(0);
 
-        request.setAttribute("product", productsDao.getProduct(Long.valueOf(pathInfo.substring(1))));
+        request.setAttribute("product", productDao.getProduct(Long.valueOf(pathInfo.substring(1))));
 
         if (showPriceHistory)
             request.getRequestDispatcher("/WEB-INF/pages/productPriceHistory.jsp").forward(request,response);
@@ -34,10 +34,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productsDao = ArrayListProductDao.getInstance();
+        productDao = ArrayListProductDao.getInstance();
     }
 
-    public void setProductsDao(ProductDao productsDao) {
-        this.productsDao = productsDao;
-    }
 }

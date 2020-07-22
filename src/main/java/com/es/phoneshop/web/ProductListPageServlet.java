@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class ProductListPageServlet extends HttpServlet {
 
-    private ProductDao productsDao;
+    private ProductDao productDao;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -20,7 +20,7 @@ public class ProductListPageServlet extends HttpServlet {
         String sortParameter = request.getParameter("sort");
         String sortOrder = request.getParameter("order");
 
-        request.setAttribute("products", productsDao.findProducts(query,
+        request.setAttribute("products", productDao.findProducts(query,
                 Optional.ofNullable(sortParameter).map(SortParameter::valueOf).orElse(null),
                 Optional.ofNullable(sortOrder).map(SortOrder::valueOf).orElse(null)));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
@@ -29,7 +29,7 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productsDao = ArrayListProductDao.getInstance();
+        productDao = ArrayListProductDao.getInstance();
     }
 
 }
