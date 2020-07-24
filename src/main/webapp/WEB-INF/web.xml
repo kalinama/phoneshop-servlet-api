@@ -27,16 +27,25 @@
 
   <servlet>
     <servlet-name>productDetails</servlet-name>
-    <servlet-class>com.es.phoneshop.web.ProductDetailsPageServlet</servlet-class>
+    <servlet-class>com.es.phoneshop.web.productDetails.ProductDetailsPageServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>productDetails</servlet-name>
     <url-pattern>/products/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+      <servlet-name>productPriceHistory</servlet-name>
+      <servlet-class>com.es.phoneshop.web.productDetails.ProductPriceHistoryPageServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>productPriceHistory</servlet-name>
+      <url-pattern>/products/price-history/*</url-pattern>
+  </servlet-mapping>
+
   <error-page>
       <location>/WEB-INF/pages/errors/errorProductNotFound.jsp</location>
-      <exception-type>com.es.phoneshop.model.product.ProductNotFoundException</exception-type>
+      <exception-type>com.es.phoneshop.model.exceptions.ProductNotFoundException</exception-type>
   </error-page>
 
   <error-page>

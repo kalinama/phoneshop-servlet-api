@@ -21,8 +21,14 @@ td {
   border : 1px solid gray;
   vertical-align: top;
 }
-.price {
+.price, .stock, .quantity {
   text-align: right;
+}
+.error{
+  color: red;
+}
+.successfully{
+  color: green;
 }
 img.product-tile {
   max-width: 64px;

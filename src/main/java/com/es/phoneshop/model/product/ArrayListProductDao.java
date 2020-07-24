@@ -1,5 +1,9 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.enums.SortOrder;
+import com.es.phoneshop.model.enums.SortParameter;
+import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -19,7 +23,7 @@ public class ArrayListProductDao implements ProductDao {
         public static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
     }
 
-    public static ProductDao getInstance() {
+    public static ArrayListProductDao getInstance() {
         return ArrayListProductDaoHolder.HOLDER_INSTANCE;
     }
 

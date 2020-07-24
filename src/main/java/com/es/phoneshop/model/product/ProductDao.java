@@ -1,5 +1,9 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.enums.SortOrder;
+import com.es.phoneshop.model.enums.SortParameter;
+
 import java.util.List;
 
 public interface ProductDao {
