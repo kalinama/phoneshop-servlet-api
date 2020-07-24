@@ -5,15 +5,16 @@ import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 public class DefaultCartService implements CartService{
 
-    private Cart cart;
+    private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
+
     private ProductDao productDao;
 
     private DefaultCartService() {
-        cart = new Cart();
         productDao = ArrayListProductDao.getInstance();
     }
 
@@ -26,25 +27,34 @@ public class DefaultCartService implements CartService{
     }
 
     @Override
-    public Cart getCart() {
-        return cart;
+    public Cart getCart(HttpSession httpSession) {
+        synchronized (httpSession) {
+            Cart cart = (Cart) httpSession.getAttribute(CART_SESSION_ATTRIBUTE);
+            if (cart == null) {
+                cart = new Cart();
+                httpSession.setAttribute(CART_SESSION_ATTRIBUTE, cart);
+            }
+            return cart;
+        }
     }
 
     @Override
-    public void add(Long productId, int quantity) throws OutOfStockException {
-        if (quantity == 0) return;
+    public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (cart) {
+            if (quantity == 0) return;
 
-        Product product = productDao.getProduct(productId);
-        Optional <CartItem> existedCartItem = cart.getItems().stream()
-              .filter(cartItem -> cartItem.getProduct().equals(product))
-              .findAny();
+            Product product = productDao.getProduct(productId);
+            Optional<CartItem> existedCartItem = cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().equals(product))
+                    .findAny();
 
-        if (!existedCartItem.isPresent()) {
-            CartItem newCartItem = new CartItem(product, 0);
-            increaseCartItemQuantity(newCartItem, quantity);
-            cart.getItems().add(newCartItem);
-        } else
-            increaseCartItemQuantity(existedCartItem.get(), quantity);
+            if (!existedCartItem.isPresent()) {
+                CartItem newCartItem = new CartItem(product, 0);
+                increaseCartItemQuantity(newCartItem, quantity);
+                cart.getItems().add(newCartItem);
+            } else
+                increaseCartItemQuantity(existedCartItem.get(), quantity);
+        }
     }
 
     private void increaseCartItemQuantity(CartItem cartItem, int quantity) throws OutOfStockException {

@@ -1,5 +1,6 @@
 package com.es.phoneshop.web.productDetails;
 
+import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
@@ -30,7 +31,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("cart", cartService.getCart());
+        request.setAttribute("cart", cartService.getCart(request.getSession()));
         Long id = getProductIdFromRequest(request);
         request.setAttribute("product", productDao.getProduct(id));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);
@@ -43,7 +44,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         if(isPostRequestCorrect(request)) {
             Long id = getProductIdFromRequest(request);
             response.sendRedirect(request.getContextPath() + "/products/"
@@ -63,8 +63,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             NumberFormat numberFormat = NumberFormat.getInstance(locale);
             quantityDouble = numberFormat.parse(request.getParameter("quantity")).doubleValue();
             quantity = (int)quantityDouble;
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             request.setAttribute("addToCartError", "Not a number");
             return false;
         }
@@ -80,9 +79,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
         }
 
         try {
-            cartService.add(id, quantity);
-        }
-        catch (OutOfStockException e) {
+            Cart cart = cartService.getCart(request.getSession());
+            cartService.add(cart,id, quantity);
+        } catch (OutOfStockException e) {
             request.setAttribute("addToCartError", "Not enough stock. Available: " + e.getAvailableStock());
             return false;
         }
