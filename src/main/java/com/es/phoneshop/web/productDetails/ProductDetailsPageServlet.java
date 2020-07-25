@@ -1,17 +1,19 @@
 package com.es.phoneshop.web.productDetails;
 
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
+import com.es.phoneshop.model.cart.service.CartService;
+import com.es.phoneshop.model.cart.service.DefaultCartService;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.*;
+import com.es.phoneshop.model.product.service.DefaultProductService;
+import com.es.phoneshop.model.product.service.ProductService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -19,21 +21,26 @@ import java.util.Locale;
 
 public class ProductDetailsPageServlet extends HttpServlet {
 
-    private ProductDao productDao;
     private CartService cartService;
+    private ProductService productService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productDao = ArrayListProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
+        productService = DefaultProductService.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("cart", cartService.getCart(request.getSession()));
         Long id = getProductIdFromRequest(request);
-        request.setAttribute("product", productDao.getProduct(id));
+        HttpSession session = request.getSession();
+        ViewedProductsUnit viewedProductsUnit = productService.getViewedProductsUnit(session);
+        productService.addProductToViewed(viewedProductsUnit, id);
+
+        request.setAttribute("cart", cartService.getCart(session));
+        request.setAttribute("viewedProducts", viewedProductsUnit.getViewedProductsWithoutLast());
+        request.setAttribute("product", productService.getProduct(id));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);
     }
 

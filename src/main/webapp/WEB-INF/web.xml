@@ -12,7 +12,7 @@
 
   <listener>
     <listener-class>
-        com.es.phoneshop.web.ProductDemoDataServletContextListener
+        com.es.phoneshop.web.listener.ProductDemoDataServletContextListener
     </listener-class>
   </listener>
 
@@ -47,7 +47,6 @@
       <location>/WEB-INF/pages/errors/errorProductNotFound.jsp</location>
       <exception-type>com.es.phoneshop.model.exceptions.ProductNotFoundException</exception-type>
   </error-page>
-
   <error-page>
       <location>/WEB-INF/pages/errors/internalServerError.jsp</location>
       <error-code>500</error-code>

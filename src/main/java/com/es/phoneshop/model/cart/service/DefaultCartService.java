@@ -1,14 +1,16 @@
-package com.es.phoneshop.model.cart;
+package com.es.phoneshop.model.cart.service;
 
+import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-public class DefaultCartService implements CartService{
+public class DefaultCartService implements CartService {
 
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
 
@@ -28,7 +30,8 @@ public class DefaultCartService implements CartService{
 
     @Override
     public Cart getCart(HttpSession httpSession) {
-        synchronized (httpSession) {
+        final Object lock = httpSession.getId().intern();
+        synchronized (lock) {
             Cart cart = (Cart) httpSession.getAttribute(CART_SESSION_ATTRIBUTE);
             if (cart == null) {
                 cart = new Cart();

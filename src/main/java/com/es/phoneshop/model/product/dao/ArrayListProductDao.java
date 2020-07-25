@@ -1,8 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.dao;
 
 import com.es.phoneshop.model.enums.SortOrder;
 import com.es.phoneshop.model.enums.SortParameter;
 import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.product.Product;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -101,8 +102,7 @@ public class ArrayListProductDao implements ProductDao {
 
                 if (idMaxValue < product.getId())
                     idMaxValue = product.getId();
-            }
-            else
+            } else
                 product.setId(++idMaxValue);
 
             products.add(product);

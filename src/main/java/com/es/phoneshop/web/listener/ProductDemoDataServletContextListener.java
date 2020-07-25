@@ -1,9 +1,8 @@
-package com.es.phoneshop.web;
+package com.es.phoneshop.web.listener;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.PriceShift;
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.*;
+import com.es.phoneshop.model.product.service.DefaultProductService;
+import com.es.phoneshop.model.product.service.ProductService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -15,17 +14,17 @@ import java.util.List;
 
 public class ProductDemoDataServletContextListener implements ServletContextListener {
 
-    private ProductDao productDao = ArrayListProductDao.getInstance(); //initialization there need to test this class
+    private ProductService productService = DefaultProductService.getInstance(); //initialization there need to test this class
                                                                     // => can't mocking static method without PowerMockito
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         boolean insertDemoData = Boolean.valueOf(servletContextEvent.getServletContext().getInitParameter("insertDemoData"));
 
         if(insertDemoData) {
-          // productDao = ArrayListProductDao.getInstance();
+          // productService = DefaultProductService.getInstance();
             for (Product product: getSampleProducts()) {
                 product.setPriceHistory(getSamplePriceHistory(product));
-                productDao.save(product);
+                productService.save(product);
             }
         }
     }
