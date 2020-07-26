@@ -55,12 +55,10 @@ public class DefaultViewedProductsService implements ViewedProductsService {
                 int index = viewedProducts.indexOf(existedProductInViewed.get());
                 if (index == 0) return;
                 viewedProducts.remove(index);
-                viewedProducts.add(0, existedProductInViewed.get());
-            } else {
-                viewedProducts.add(0, product);
-                viewedProducts.removeIf(p -> viewedProducts.indexOf(p)
-                        == ViewedProductsUnit.MAX_SIZE_OF_LIST);
             }
+            viewedProducts.add(0, product);
+            viewedProducts.removeIf(productToRemove -> viewedProducts.indexOf(productToRemove)
+                        == ViewedProductsUnit.MAX_SIZE_OF_LIST);
         }
     }
 
