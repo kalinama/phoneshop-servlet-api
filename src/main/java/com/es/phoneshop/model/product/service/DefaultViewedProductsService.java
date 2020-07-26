@@ -1,7 +1,5 @@
 package com.es.phoneshop.model.product.service;
 
-import com.es.phoneshop.model.enums.SortOrder;
-import com.es.phoneshop.model.enums.SortParameter;
 import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
@@ -9,43 +7,24 @@ import com.es.phoneshop.model.product.dao.ProductDao;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class DefaultProductService implements ProductService {
+public class DefaultViewedProductsService implements ViewedProductsService {
 
-    private static final String VIEWED_PRODUCT_SESSION_ATTRIBUTE = DefaultProductService.class.getName() + ".viewedProduct";
+    private static final String VIEWED_PRODUCT_SESSION_ATTRIBUTE = DefaultViewedProductsService.class.getName() + ".viewedProduct";
 
     private ProductDao productDao;
 
-    private DefaultProductService() {
+    private DefaultViewedProductsService() {
         productDao = ArrayListProductDao.getInstance();
     }
 
     public static class DefaultProductServiceHolder {
-        public static final DefaultProductService HOLDER_INSTANCE = new DefaultProductService();
+        public static final DefaultViewedProductsService HOLDER_INSTANCE = new DefaultViewedProductsService();
     }
 
-    public static DefaultProductService getInstance() {
-        return DefaultProductService.DefaultProductServiceHolder.HOLDER_INSTANCE;
-    }
-
-    @Override
-    public Product getProduct(Long id){
-        return productDao.getProduct(id);
-    }
-
-    @Override
-    public List<Product> findProducts(String query, SortParameter sortParameter, SortOrder sortOrder){
-        return productDao.findProducts(query, sortParameter, sortOrder);
-    }
-
-    @Override
-    public void save(Product product){
-        productDao.save(product);
-    }
-
-    @Override
-    public void delete(Long id){
-        productDao.delete(id);
+    public static DefaultViewedProductsService getInstance() {
+        return DefaultViewedProductsService.DefaultProductServiceHolder.HOLDER_INSTANCE;
     }
 
     @Override
@@ -80,9 +59,24 @@ public class DefaultProductService implements ProductService {
             } else {
                 viewedProducts.add(0, product);
                 viewedProducts.removeIf(p -> viewedProducts.indexOf(p)
-                        == ViewedProductsUnit.AMOUNT_OF_VIEWED_PRODUCTS + 1);
+                        == ViewedProductsUnit.MAX_SIZE_OF_LIST);
             }
         }
-
     }
+
+    public List<Product> getViewedProducts(ViewedProductsUnit viewedProductsUnit) {
+        List<Product> recentlyViewedProductsList = viewedProductsUnit.getRecentlyViewedProductsList();
+        return recentlyViewedProductsList.stream()
+                .filter(product -> recentlyViewedProductsList.indexOf(product)
+                        != ViewedProductsUnit.AMOUNT_OF_VIEWED_PRODUCTS)
+                .collect(Collectors.toList());
+    }
+
+    public List<Product> getViewedProductsWithoutLast(ViewedProductsUnit viewedProductsUnit) {
+        List<Product> recentlyViewedProductsList = viewedProductsUnit.getRecentlyViewedProductsList();
+        return recentlyViewedProductsList.stream()
+                .filter(product -> recentlyViewedProductsList.indexOf(product)!= 0)
+                .collect(Collectors.toList());
+    }
+
 }

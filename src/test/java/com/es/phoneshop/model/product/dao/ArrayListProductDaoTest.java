@@ -1,10 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.dao;
 
 import com.es.phoneshop.model.enums.SortOrder;
 import com.es.phoneshop.model.enums.SortParameter;
 import com.es.phoneshop.model.exceptions.ProductNotFoundException;
-import com.es.phoneshop.model.product.dao.ArrayListProductDao;
-import com.es.phoneshop.model.product.dao.ProductDao;
+import com.es.phoneshop.model.product.Product;
 import org.junit.Before;
 import org.junit.Test;
 

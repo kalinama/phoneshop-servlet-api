@@ -3,8 +3,10 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.model.enums.SortOrder;
 import com.es.phoneshop.model.enums.SortParameter;
 import com.es.phoneshop.model.product.*;
-import com.es.phoneshop.model.product.service.DefaultProductService;
-import com.es.phoneshop.model.product.service.ProductService;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
+import com.es.phoneshop.model.product.service.DefaultViewedProductsService;
+import com.es.phoneshop.model.product.service.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,7 +18,8 @@ import java.util.Optional;
 
 public class ProductListPageServlet extends HttpServlet {
 
-    private ProductService productService;
+    private ViewedProductsService viewedProductsService;
+    private ProductDao productDao;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,10 +27,10 @@ public class ProductListPageServlet extends HttpServlet {
         String sortParameter = request.getParameter("sort");
         String sortOrder = request.getParameter("order");
 
-        ViewedProductsUnit viewedProductsUnit = productService.getViewedProductsUnit(request.getSession());
+        ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(request.getSession());
 
-        request.setAttribute("viewedProducts", viewedProductsUnit.getFixedAmountOfViewedProducts());
-        request.setAttribute("products", productService.findProducts(query,
+        request.setAttribute("viewedProducts", viewedProductsService.getViewedProducts(viewedProductsUnit));
+        request.setAttribute("products", productDao.findProducts(query,
                 Optional.ofNullable(sortParameter).map(SortParameter::valueOf).orElse(null),
                 Optional.ofNullable(sortOrder).map(SortOrder::valueOf).orElse(null)));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
@@ -36,7 +39,8 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productService = DefaultProductService.getInstance();
+        viewedProductsService = DefaultViewedProductsService.getInstance();
+        productDao = ArrayListProductDao.getInstance();
     }
 
 }

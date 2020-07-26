@@ -44,7 +44,7 @@ public class DefaultCartService implements CartService {
     @Override
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (cart) {
-            if (quantity == 0) return;
+            if (quantity <=0 ) return; //need to create special exception??
 
             Product product = productDao.getProduct(productId);
             Optional<CartItem> existedCartItem = cart.getItems().stream()

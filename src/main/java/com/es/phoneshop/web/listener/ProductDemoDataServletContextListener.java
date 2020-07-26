@@ -1,8 +1,8 @@
 package com.es.phoneshop.web.listener;
 
 import com.es.phoneshop.model.product.*;
-import com.es.phoneshop.model.product.service.DefaultProductService;
-import com.es.phoneshop.model.product.service.ProductService;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ProductDemoDataServletContextListener implements ServletContextListener {
 
-    private ProductService productService = DefaultProductService.getInstance(); //initialization there need to test this class
+    private ProductDao productService = ArrayListProductDao.getInstance(); //initialization there need to test this class
                                                                     // => can't mocking static method without PowerMockito
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {

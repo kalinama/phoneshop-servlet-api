@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 public class ViewedProductsUnit {
 
     public static final int AMOUNT_OF_VIEWED_PRODUCTS = 3;
+    public static final int MAX_SIZE_OF_LIST = AMOUNT_OF_VIEWED_PRODUCTS + 1;
 
     private List<Product> recentlyViewedProducts;
 
@@ -16,20 +17,6 @@ public class ViewedProductsUnit {
 
     public List<Product> getRecentlyViewedProductsList() {
         return recentlyViewedProducts;
-    }
-
-    public List<Product> getFixedAmountOfViewedProducts() {
-
-        return recentlyViewedProducts.stream()
-                .filter(product -> recentlyViewedProducts.indexOf(product)
-                        != AMOUNT_OF_VIEWED_PRODUCTS)
-                .collect(Collectors.toList());
-    }
-
-    public List<Product> getViewedProductsWithoutLast() {
-        return recentlyViewedProducts.stream()
-                .filter(product -> recentlyViewedProducts.indexOf(product)!=0)
-                .collect(Collectors.toList());
     }
 
 }

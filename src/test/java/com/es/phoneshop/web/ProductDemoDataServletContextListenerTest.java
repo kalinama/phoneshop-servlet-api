@@ -29,20 +29,20 @@ public class ProductDemoDataServletContextListenerTest {
     ProductDemoDataServletContextListener productDemoDataServletContextListener;
 
     @Test
-    public void testAddDemoData() {
-//        when(servletContextEvent.getServletContext()).thenReturn(servletContext);
-//        when(servletContext.getInitParameter(anyString())).thenReturn("true");
-//        productDemoDataServletContextListener.contextInitialized(servletContextEvent);
-//
-//        verify(productDao, atLeast(1)).save(any(Product.class));
+    public void testAddDemoDataTest() {
+        when(servletContextEvent.getServletContext()).thenReturn(servletContext);
+        when(servletContext.getInitParameter(anyString())).thenReturn("true");
+        productDemoDataServletContextListener.contextInitialized(servletContextEvent);
+
+        verify(productDao, atLeast(1)).save(any(Product.class));
     }
 
     @Test
-    public void testNotAddDemoData() {
-//        when(servletContextEvent.getServletContext()).thenReturn(servletContext);
-//        when(servletContext.getInitParameter(anyString())).thenReturn("false");
-//        productDemoDataServletContextListener.contextInitialized(servletContextEvent);
-//
-//        verify(productDao, times(0)).save(any(Product.class));
+    public void testNotAddDemoDataTest() {
+        when(servletContextEvent.getServletContext()).thenReturn(servletContext);
+        when(servletContext.getInitParameter(anyString())).thenReturn("false");
+        productDemoDataServletContextListener.contextInitialized(servletContextEvent);
+
+        verify(productDao, times(0)).save(any(Product.class));
     }
 }

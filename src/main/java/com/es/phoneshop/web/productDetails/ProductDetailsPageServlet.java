@@ -5,8 +5,10 @@ import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
 import com.es.phoneshop.model.product.*;
-import com.es.phoneshop.model.product.service.DefaultProductService;
-import com.es.phoneshop.model.product.service.ProductService;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
+import com.es.phoneshop.model.product.service.DefaultViewedProductsService;
+import com.es.phoneshop.model.product.service.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,25 +24,28 @@ import java.util.Locale;
 public class ProductDetailsPageServlet extends HttpServlet {
 
     private CartService cartService;
-    private ProductService productService;
+    private ViewedProductsService viewedProductsService;
+    private ProductDao productDao;
+
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cartService = DefaultCartService.getInstance();
-        productService = DefaultProductService.getInstance();
+        viewedProductsService = DefaultViewedProductsService.getInstance();
+        productDao = ArrayListProductDao.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Long id = getProductIdFromRequest(request);
         HttpSession session = request.getSession();
-        ViewedProductsUnit viewedProductsUnit = productService.getViewedProductsUnit(session);
-        productService.addProductToViewed(viewedProductsUnit, id);
+        ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(session);
+        viewedProductsService.addProductToViewed(viewedProductsUnit, id);
 
         request.setAttribute("cart", cartService.getCart(session));
-        request.setAttribute("viewedProducts", viewedProductsUnit.getViewedProductsWithoutLast());
-        request.setAttribute("product", productService.getProduct(id));
+        request.setAttribute("product", productDao.getProduct(id));
+        request.setAttribute("viewedProducts", viewedProductsService.getViewedProductsWithoutLast(viewedProductsUnit));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);
     }
 
@@ -62,26 +67,26 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     private boolean isPostRequestCorrect(HttpServletRequest request) {
         int quantity;
-        double quantityDouble;
+        double quantityFractional;
         Long id = getProductIdFromRequest(request);
 
         try {
             Locale locale = request.getLocale();
             NumberFormat numberFormat = NumberFormat.getInstance(locale);
-            quantityDouble = numberFormat.parse(request.getParameter("quantity")).doubleValue();
-            quantity = (int)quantityDouble;
+            quantityFractional = numberFormat.parse(request.getParameter("quantity")).doubleValue();
+            quantity = (int)quantityFractional;
         } catch (ParseException e) {
             request.setAttribute("addToCartError", "Not a number");
             return false;
         }
 
-        if (quantityDouble != quantity){
+        if (quantityFractional != quantity){
             request.setAttribute("addToCartError", "Can't enter fractional number");
             return false;
         }
 
-        if (quantity == 0) {
-            request.setAttribute("addToCartError", "Can't add 0 items");
+        if (quantity <= 0) {
+            request.setAttribute("addToCartError", "Can't add 0 or negative number of items");
             return false;
         }
 
