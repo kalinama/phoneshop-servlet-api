@@ -20,8 +20,8 @@ public class ArrayListProductDao implements ProductDao {
 
     private ArrayListProductDao() { products = new ArrayList<>();}
 
-    public static class ArrayListProductDaoHolder {
-        public static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
+    private static class ArrayListProductDaoHolder {
+        static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
     }
 
     public static ArrayListProductDao getInstance() {

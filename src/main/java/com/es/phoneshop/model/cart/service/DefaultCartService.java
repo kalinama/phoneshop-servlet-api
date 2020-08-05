@@ -3,6 +3,7 @@ package com.es.phoneshop.model.cart.service;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
+import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
@@ -20,12 +21,12 @@ public class DefaultCartService implements CartService {
         productDao = ArrayListProductDao.getInstance();
     }
 
-    public static class DefaultCartServiceHolder {
-        public static final DefaultCartService HOLDER_INSTANCE = new DefaultCartService();
+    private static class DefaultCartServiceHolder {
+        static final DefaultCartService HOLDER_INSTANCE = new DefaultCartService();
     }
 
     public static DefaultCartService getInstance() {
-        return DefaultCartService.DefaultCartServiceHolder.HOLDER_INSTANCE;
+        return DefaultCartServiceHolder.HOLDER_INSTANCE;
     }
 
     @Override
@@ -44,29 +45,29 @@ public class DefaultCartService implements CartService {
     @Override
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (cart) {
-            if (quantity <=0 ) return; //need to create special exception??
+            if (quantity <=0 ) throw new WrongItemQuantityException();
 
             Product product = productDao.getProduct(productId);
             Optional<CartItem> existedCartItem = cart.getItems().stream()
                     .filter(cartItem -> cartItem.getProduct().equals(product))
                     .findAny();
 
+            int availableQuantity = product.getStock() -
+                    existedCartItem.map(CartItem::getQuantity).orElse(0);
+
+            if (quantity > availableQuantity)
+                throw new OutOfStockException(availableQuantity);
+
             if (!existedCartItem.isPresent()) {
-                CartItem newCartItem = new CartItem(product, 0);
-                increaseCartItemQuantity(newCartItem, quantity);
+                CartItem newCartItem = new CartItem(product, quantity);
                 cart.getItems().add(newCartItem);
             } else
                 increaseCartItemQuantity(existedCartItem.get(), quantity);
         }
     }
 
-    private void increaseCartItemQuantity(CartItem cartItem, int quantity) throws OutOfStockException {
-        int availableQuantity = cartItem.getProduct().getStock() - cartItem.getQuantity();
-
-        if (quantity <= availableQuantity)
-            cartItem.addQuantity(quantity);
-        else
-            throw new OutOfStockException(availableQuantity);
+    private void increaseCartItemQuantity(CartItem cartItem, int quantity) {
+        cartItem.setQuantity(cartItem.getQuantity() + quantity);
     }
 
 }

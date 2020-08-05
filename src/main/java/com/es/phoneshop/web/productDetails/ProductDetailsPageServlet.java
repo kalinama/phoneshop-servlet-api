@@ -9,6 +9,7 @@ import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.product.service.DefaultViewedProductsService;
 import com.es.phoneshop.model.product.service.ViewedProductsService;
+import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -43,9 +44,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
         ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(session);
         viewedProductsService.addProductToViewed(viewedProductsUnit, id);
 
-        request.setAttribute("cart", cartService.getCart(session));
-        request.setAttribute("product", productDao.getProduct(id));
-        request.setAttribute("viewedProducts", viewedProductsService.getViewedProductsWithoutLast(viewedProductsUnit));
+        request.setAttribute(CART, cartService.getCart(session));
+        request.setAttribute(PRODUCT, productDao.getProduct(id));
+        request.setAttribute(VIEWED_PRODUCTS, viewedProductsService.getViewedProductsWithoutLast(viewedProductsUnit));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);
     }
 
@@ -60,8 +61,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             Long id = getProductIdFromRequest(request);
             response.sendRedirect(request.getContextPath() + "/products/"
                     + id + "?message=Added to cart successfully");
-        }
-        else
+        } else
             doGet(request,response);
     }
 
@@ -73,20 +73,21 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             Locale locale = request.getLocale();
             NumberFormat numberFormat = NumberFormat.getInstance(locale);
-            quantityFractional = numberFormat.parse(request.getParameter("quantity")).doubleValue();
+            quantityFractional = numberFormat.parse(request.getParameter(QUANTITY))
+                    .doubleValue();
             quantity = (int)quantityFractional;
         } catch (ParseException e) {
-            request.setAttribute("addToCartError", "Not a number");
+            request.setAttribute(ADD_TO_CART_ERROR,"Not a number");
             return false;
         }
 
         if (quantityFractional != quantity){
-            request.setAttribute("addToCartError", "Can't enter fractional number");
+            request.setAttribute(ADD_TO_CART_ERROR,"Can't enter fractional number");
             return false;
         }
 
         if (quantity <= 0) {
-            request.setAttribute("addToCartError", "Can't add 0 or negative number of items");
+            request.setAttribute(ADD_TO_CART_ERROR,"Can't add 0 or negative number of items");
             return false;
         }
 
@@ -94,7 +95,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             Cart cart = cartService.getCart(request.getSession());
             cartService.add(cart,id, quantity);
         } catch (OutOfStockException e) {
-            request.setAttribute("addToCartError", "Not enough stock. Available: " + e.getAvailableStock());
+            request.setAttribute(ADD_TO_CART_ERROR,"Not enough stock. Available: " + e.getAvailableStock());
             return false;
         }
 

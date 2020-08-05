@@ -19,12 +19,12 @@ public class DefaultViewedProductsService implements ViewedProductsService {
         productDao = ArrayListProductDao.getInstance();
     }
 
-    public static class DefaultProductServiceHolder {
-        public static final DefaultViewedProductsService HOLDER_INSTANCE = new DefaultViewedProductsService();
+    private static class DefaultProductServiceHolder {
+        static final DefaultViewedProductsService HOLDER_INSTANCE = new DefaultViewedProductsService();
     }
 
     public static DefaultViewedProductsService getInstance() {
-        return DefaultViewedProductsService.DefaultProductServiceHolder.HOLDER_INSTANCE;
+        return DefaultProductServiceHolder.HOLDER_INSTANCE;
     }
 
     @Override
@@ -76,5 +76,4 @@ public class DefaultViewedProductsService implements ViewedProductsService {
                 .filter(product -> recentlyViewedProductsList.indexOf(product)!= 0)
                 .collect(Collectors.toList());
     }
-
 }
