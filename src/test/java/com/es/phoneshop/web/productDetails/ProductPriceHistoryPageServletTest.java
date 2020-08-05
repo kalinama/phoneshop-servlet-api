@@ -1,6 +1,6 @@
-package com.es.phoneshop.web;
+package com.es.phoneshop.web.productDetails;
 
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,10 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductDetailsPageServletTest {
+public class ProductPriceHistoryPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -28,26 +30,17 @@ public class ProductDetailsPageServletTest {
     private ProductDao productDao;
 
     @InjectMocks
-    private ProductDetailsPageServlet servlet;
+    private ProductPriceHistoryPageServlet servlet;
 
     @Before
     public void setup() {
+
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
     }
 
     @Test
-    public void testDoGetProductDetails() throws ServletException, IOException {
+    public void testDoGetTest() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn("/1");
-        servlet.doGet(request, response);
-
-        verify(requestDispatcher).forward(request, response);
-        verify(request).getRequestDispatcher(eq("/WEB-INF/pages/productDetails.jsp"));
-        verify(request).setAttribute(eq("product"), any());
-    }
-
-    @Test
-    public void testDoGetProductPriceHistory() throws ServletException, IOException {
-        when(request.getPathInfo()).thenReturn("/1/price-history");
         servlet.doGet(request, response);
 
         verify(requestDispatcher).forward(request, response);

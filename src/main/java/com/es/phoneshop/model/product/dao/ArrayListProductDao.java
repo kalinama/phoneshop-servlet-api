@@ -1,4 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.dao;
+
+import com.es.phoneshop.model.enums.SortOrder;
+import com.es.phoneshop.model.enums.SortParameter;
+import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.product.Product;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -15,11 +20,11 @@ public class ArrayListProductDao implements ProductDao {
 
     private ArrayListProductDao() { products = new ArrayList<>();}
 
-    public static class ArrayListProductDaoHolder {
-        public static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
+    private static class ArrayListProductDaoHolder {
+        static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
     }
 
-    public static ProductDao getInstance() {
+    public static ArrayListProductDao getInstance() {
         return ArrayListProductDaoHolder.HOLDER_INSTANCE;
     }
 
@@ -43,7 +48,8 @@ public class ArrayListProductDao implements ProductDao {
         try {
             Comparator<Product> comparator = getComparatorForProductList(query,sortParameter,sortOrder);
             return products.stream()
-                    .filter(product -> query==null || query.isEmpty() || isProductMatchedQuery(product, query))
+                    .filter(product -> query==null || query.isEmpty()
+                            || isProductMatchedQuery(product, query.toLowerCase()))
                     .filter(product -> product.getPrice() != null)
                     .filter(product -> product.getStock() > 0)
                     .sorted(comparator)
@@ -56,7 +62,7 @@ public class ArrayListProductDao implements ProductDao {
 
     private Comparator<Product> getComparatorForProductList(String query, SortParameter sortParameter, SortOrder sortOrder){
         Comparator<Product> comparator = Comparator.comparing((Product product) -> ( query != null && !query.isEmpty()
-                ? getQueryMatchRate(product, query) : 0))
+                ? getQueryMatchRate(product, query.toLowerCase()) : 0))
                 .reversed();
 
         if(sortParameter == SortParameter.description)
@@ -72,17 +78,27 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     private boolean isProductMatchedQuery(Product product, String query) {
-       return Arrays.stream(product.getDescription().split(SEPARATOR))
+       return Arrays.stream(product.getDescription().toLowerCase().split(SEPARATOR))
                 .anyMatch(wordFromDescription-> Arrays.stream(query.split(SEPARATOR))
                         .anyMatch(wordFromDescription::contains));
 
     }
 
     private double getQueryMatchRate(Product product, String query){
-        return (double) Arrays.stream(query.split(SEPARATOR))
-                .filter(wordFromQuery -> product.getDescription().contains(wordFromQuery))
-                .count()
-                / product.getDescription().split(SEPARATOR).length;
+        long quantityOfWordInDescription = product.getDescription().split(SEPARATOR).length;
+
+        long quantityOfCompleteMatchedWords = Arrays.stream(query.split(SEPARATOR))
+                .filter(wordFromQuery -> Arrays.asList(product.getDescription()
+                        .toLowerCase().split(SEPARATOR)).contains(wordFromQuery))
+                .count();
+
+        long quantityOfPartialMatchedWords =  Arrays.stream(query.split(SEPARATOR))
+                .filter(wordFromQuery -> product.getDescription()
+                        .toLowerCase().contains(wordFromQuery))
+                .count();
+
+        return  quantityOfCompleteMatchedWords
+                + (double) quantityOfPartialMatchedWords / quantityOfWordInDescription;
     }
 
     @Override
@@ -97,8 +113,7 @@ public class ArrayListProductDao implements ProductDao {
 
                 if (idMaxValue < product.getId())
                     idMaxValue = product.getId();
-            }
-            else
+            } else
                 product.setId(++idMaxValue);
 
             products.add(product);

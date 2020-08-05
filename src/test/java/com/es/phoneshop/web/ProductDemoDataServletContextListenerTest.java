@@ -1,7 +1,8 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.dao.ProductDao;
+import com.es.phoneshop.web.listener.ProductDemoDataServletContextListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,13 +23,13 @@ public class ProductDemoDataServletContextListenerTest {
     @Mock
     ServletContext servletContext;
     @Mock
-    ArrayListProductDao productDao;
+    ProductDao productDao;
 
     @InjectMocks
     ProductDemoDataServletContextListener productDemoDataServletContextListener;
 
     @Test
-    public void testAddDemoData() {
+    public void testAddDemoDataTest() {
         when(servletContextEvent.getServletContext()).thenReturn(servletContext);
         when(servletContext.getInitParameter(anyString())).thenReturn("true");
         productDemoDataServletContextListener.contextInitialized(servletContextEvent);
@@ -37,7 +38,7 @@ public class ProductDemoDataServletContextListenerTest {
     }
 
     @Test
-    public void testNotAddDemoData() {
+    public void testNotAddDemoDataTest() {
         when(servletContextEvent.getServletContext()).thenReturn(servletContext);
         when(servletContext.getInitParameter(anyString())).thenReturn("false");
         productDemoDataServletContextListener.contextInitialized(servletContextEvent);

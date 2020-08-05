@@ -1,9 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.exceptions;
 
 public class ProductNotFoundException extends RuntimeException{
     private long id;
 
-    ProductNotFoundException(String errorMessage) { super(errorMessage); }
+    public ProductNotFoundException(String errorMessage) { super(errorMessage); }
     ProductNotFoundException(long id) { this.id = id; }
 
     public long getId() {

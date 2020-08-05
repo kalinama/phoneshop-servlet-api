@@ -1,9 +1,11 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.dao;
 
+import com.es.phoneshop.model.enums.SortOrder;
+import com.es.phoneshop.model.enums.SortParameter;
+import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.product.Product;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -110,9 +112,9 @@ public class ArrayListProductDaoTest
     public void testFindProductsWithQuery()  {
         List<Product> result = productDao.findProducts("Samsung S", null, null);
         List<String> correctList = new ArrayList<>();
-        correctList.add("Samsung Galaxy");
         correctList.add("Samsung Galaxy S III");
         correctList.add("Samsung Galaxy S II");
+        correctList.add("Samsung Galaxy");
 
         assertEquals(correctList.get(0), result.get(0).getDescription());
         assertEquals(correctList.get(1), result.get(1).getDescription());
