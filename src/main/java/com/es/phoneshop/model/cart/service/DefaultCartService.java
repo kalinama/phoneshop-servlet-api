@@ -58,10 +58,9 @@ public class DefaultCartService implements CartService {
             if (quantity > availableQuantity)
                 throw new OutOfStockException(availableQuantity);
 
-            if (!existedCartItem.isPresent()) {
-                CartItem newCartItem = new CartItem(product, quantity);
-                cart.getItems().add(newCartItem);
-            } else
+            if (!existedCartItem.isPresent())
+                cart.getItems().add(new CartItem(product, quantity));
+            else
                 increaseCartItemQuantity(existedCartItem.get(), quantity);
         }
     }
@@ -70,4 +69,19 @@ public class DefaultCartService implements CartService {
         cartItem.setQuantity(cartItem.getQuantity() + quantity);
     }
 
+    @Override
+    public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (cart) {
+            if (quantity <= 0) throw new WrongItemQuantityException();
+
+            Product product = productDao.getProduct(productId);
+
+            if (quantity > product.getStock())
+                throw new OutOfStockException(product.getStock());
+
+            cart.getItems().stream()
+                    .filter(item -> item.getProduct().equals(product))
+                    .findAny().get().setQuantity(quantity);
+        }
+    }
 }

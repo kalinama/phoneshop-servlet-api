@@ -1,0 +1,56 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+
+ <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
+ <tags:master pageTitle="Cart">
+<p/>
+ <c:if test="${not empty param.message}">
+     <div class="successfully"> ${param.message} </div>
+ </c:if>
+ <c:if test="${not empty wrongQuantityErrors}">
+     <div class="error"> An error occurred! Cart not updated completely. </div>
+ </c:if>
+<p/>
+ <table>
+     <thead>
+         <tr>
+             <td>Image</td>
+             <td>Description</td>
+             <td class="price">Price</td>
+             <td>Quantity</td>
+         </tr>
+     </thead>
+     <c:forEach var="cartItem" items="${cart.items}" varStatus="loop">
+         <tr>
+             <td>
+                 <img class="product-tile" src="${cartItem.product.imageUrl}">
+             </td>
+             <td>
+                 <a href="${pageContext.servletContext.contextPath}/products/${cartItem.product.id}">
+                     ${cartItem.product.description}
+                 </a>
+             </td>
+             <td class="price">
+                 <a href="${pageContext.servletContext.contextPath}/products/price-history/${cartItem.product.id}">
+                     <fmt:formatNumber value="${cartItem.product.price}" type="currency"
+                     currencySymbol="${cartItem.product.currency.symbol}"/>
+                 </a>
+             </td>
+             <td>
+                <input class="quantity" name="quantity"
+                value="${not empty wrongQuantityErrors[cartItem.product.id] ? paramValues.quantity[loop.index] : cartItem.quantity}" form="update"/>
+                 <input type="hidden" name="productId" value="${cartItem.product.id}" form="update"/>
+                 <c:if test="${not empty wrongQuantityErrors[ cartItem.product.id]}">
+                      <div class="error"> ${wrongQuantityErrors[cartItem.product.id]} </div>
+                  </c:if>
+         </tr>
+     </c:forEach>
+ </table>
+
+ <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">
+     <button>Update</button>
+ </form>
+
+ </tags:master>

@@ -7,10 +7,10 @@
  <tags:master pageTitle="Product Details">
 
  <p> Your cart: "${cart}" </p>
- <c:if test="${not empty param.message and empty addToCartError}">
+ <c:if test="${not empty param.message}">
      <div class="successfully"> ${param.message} </div>
  </c:if>
- <c:if test="${not empty addToCartError}">
+ <c:if test="${not empty wrongQuantityError}">
      <div class="error"> An error occurred! Product not added to cart. </div>
  </c:if>
  <p>
@@ -39,12 +39,12 @@
  </table>
 
  <p> Add to cart: Input quantity <p>
- <form method="post">
-     <input class="quantity" name="quantity" value="${not empty addToCartError ? param.quantity : 1}" />
+ <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
+     <input class="quantity" name="quantity" value="${not empty wrongQuantityError ? param.quantity : 1}" />
      <button>Add</button>
  </form>
- <c:if test="${not empty addToCartError}">
-     <div class="error"> ${addToCartError} </div>
+ <c:if test="${not empty wrongQuantityError}">
+     <div class="error"> ${wrongQuantityError} </div>
  </c:if>
 
  <tags:recentlyViewedProducts />

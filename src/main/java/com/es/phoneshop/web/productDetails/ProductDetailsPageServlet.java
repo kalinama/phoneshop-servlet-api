@@ -77,17 +77,17 @@ public class ProductDetailsPageServlet extends HttpServlet {
                     .doubleValue();
             quantity = (int)quantityFractional;
         } catch (ParseException e) {
-            request.setAttribute(ADD_TO_CART_ERROR,"Not a number");
+            request.setAttribute(WRONG_QUANTITY_ERROR,"Not a number");
             return false;
         }
 
         if (quantityFractional != quantity){
-            request.setAttribute(ADD_TO_CART_ERROR,"Can't enter fractional number");
+            request.setAttribute(WRONG_QUANTITY_ERROR,"Can't enter fractional number");
             return false;
         }
 
         if (quantity <= 0) {
-            request.setAttribute(ADD_TO_CART_ERROR,"Can't add 0 or negative number of items");
+            request.setAttribute(WRONG_QUANTITY_ERROR,"Can't add 0 or negative number of items");
             return false;
         }
 
@@ -95,7 +95,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
             Cart cart = cartService.getCart(request.getSession());
             cartService.add(cart,id, quantity);
         } catch (OutOfStockException e) {
-            request.setAttribute(ADD_TO_CART_ERROR,"Not enough stock. Available: " + e.getAvailableStock());
+            request.setAttribute(WRONG_QUANTITY_ERROR,"Not enough stock. Available: " + e.getAvailableStock());
             return false;
         }
 
