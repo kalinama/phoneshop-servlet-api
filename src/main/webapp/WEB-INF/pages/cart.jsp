@@ -40,11 +40,18 @@
              </td>
              <td>
                 <input class="quantity" name="quantity"
-                value="${not empty wrongQuantityErrors[cartItem.product.id] ? paramValues.quantity[loop.index] : cartItem.quantity}" form="update"/>
-                 <input type="hidden" name="productId" value="${cartItem.product.id}" form="update"/>
-                 <c:if test="${not empty wrongQuantityErrors[ cartItem.product.id]}">
-                      <div class="error"> ${wrongQuantityErrors[cartItem.product.id]} </div>
-                  </c:if>
+                    value="${not empty wrongQuantityErrors[cartItem.product.id] ? paramValues.quantity[loop.index] : cartItem.quantity}"
+                    form="update"/>
+                <input type="hidden" name="productId" value="${cartItem.product.id}" form="update"/>
+                <c:if test="${not empty wrongQuantityErrors[ cartItem.product.id]}">
+                    <div class="error"> ${wrongQuantityErrors[cartItem.product.id]} </div>
+                </c:if>
+             </td>
+             <td>
+                <form method="post" action="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${cartItem.product.id}">
+                    <button>Delete</button>
+                </form>
+              </td>
          </tr>
      </c:forEach>
  </table>
@@ -52,5 +59,6 @@
  <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">
      <button>Update</button>
  </form>
+
 
  </tags:master>

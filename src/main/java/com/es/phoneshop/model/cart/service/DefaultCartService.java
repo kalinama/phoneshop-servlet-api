@@ -84,4 +84,12 @@ public class DefaultCartService implements CartService {
                     .findAny().get().setQuantity(quantity);
         }
     }
+
+    @Override
+    public void delete(Cart cart, Long productId) {
+        synchronized (cart) {
+            Product product = productDao.getProduct(productId);
+            cart.getItems().removeIf(item -> item.getProduct().equals(product));
+        }
+    }
 }

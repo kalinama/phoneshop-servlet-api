@@ -52,6 +52,15 @@
       <url-pattern>/cart</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+      <servlet-name>cartItemDelete</servlet-name>
+      <servlet-class>com.es.phoneshop.web.CartItemDeleteServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>cartItemDelete</servlet-name>
+      <url-pattern>/cart/deleteCartItem/*</url-pattern>
+  </servlet-mapping>
+
   <error-page>
       <location>/WEB-INF/pages/errors/errorProductNotFound.jsp</location>
       <exception-type>com.es.phoneshop.model.exceptions.ProductNotFoundException</exception-type>
