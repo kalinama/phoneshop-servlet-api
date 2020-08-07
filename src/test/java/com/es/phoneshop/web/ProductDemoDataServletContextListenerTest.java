@@ -2,7 +2,7 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.dao.ProductDao;
-import com.es.phoneshop.web.listener.ProductDemoDataServletContextListener;
+import com.es.phoneshop.web.listeners.ProductDemoDataServletContextListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

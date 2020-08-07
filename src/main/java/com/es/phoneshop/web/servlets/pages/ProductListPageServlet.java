@@ -1,4 +1,4 @@
-package com.es.phoneshop.web;
+package com.es.phoneshop.web.servlets.pages;
 
 import com.es.phoneshop.model.enums.SortOrder;
 import com.es.phoneshop.model.enums.SortParameter;
