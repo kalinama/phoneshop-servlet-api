@@ -35,7 +35,7 @@ public class CartPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<Long, String> errors = getErrorsFromRequest(request);
+        Map<Long,String> errors = getErrorsFromRequest(request);
         request.setAttribute(WRONG_QUANTITY_ERRORS, errors);
 
         if (errors.isEmpty())
@@ -44,7 +44,7 @@ public class CartPageServlet extends HttpServlet {
             doGet(request, response);
     }
 
-    private Map<Long, String> getErrorsFromRequest(HttpServletRequest request)
+    private Map<Long,String> getErrorsFromRequest(HttpServletRequest request)
     {
         List<String> quantityParameters = Arrays.asList(request.getParameterValues(QUANTITY));
         List<String> idParameters = Arrays.asList(request.getParameterValues(PRODUCT_ID));

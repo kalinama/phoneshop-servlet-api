@@ -44,7 +44,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
         ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(session);
         viewedProductsService.addProductToViewed(viewedProductsUnit, id);
 
-        request.setAttribute(CART, cartService.getCart(session));
         request.setAttribute(PRODUCT, productDao.getProduct(id));
         request.setAttribute(VIEWED_PRODUCTS, viewedProductsService.getViewedProductsWithoutLast(viewedProductsUnit));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);

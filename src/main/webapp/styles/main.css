@@ -44,6 +44,11 @@ td {
 img.product-tile {
   max-width: 64px;
 }
+.miniCart {
+text-align: right;
+color: black;
+font-size: 50;
+}
 
 /* Page specific styles */
 body.product-list {

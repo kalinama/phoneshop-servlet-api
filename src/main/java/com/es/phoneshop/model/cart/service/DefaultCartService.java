@@ -9,6 +9,7 @@ import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class DefaultCartService implements CartService {
@@ -62,6 +63,7 @@ public class DefaultCartService implements CartService {
                 cart.getItems().add(new CartItem(product, quantity));
             else
                 increaseCartItemQuantity(existedCartItem.get(), quantity);
+            recalculateCart(cart);
         }
     }
 
@@ -82,6 +84,7 @@ public class DefaultCartService implements CartService {
             cart.getItems().stream()
                     .filter(item -> item.getProduct().equals(product))
                     .findAny().get().setQuantity(quantity);
+            recalculateCart(cart);
         }
     }
 
@@ -90,6 +93,22 @@ public class DefaultCartService implements CartService {
         synchronized (cart) {
             Product product = productDao.getProduct(productId);
             cart.getItems().removeIf(item -> item.getProduct().equals(product));
+            recalculateCart(cart);
+        }
+    }
+
+    private void recalculateCart(Cart cart) {
+        synchronized (cart) {
+            long totalQuantity = cart.getItems().stream()
+                    .mapToInt(CartItem::getQuantity)
+                    .sum();
+            BigDecimal totalCost = cart.getItems().stream()
+                    .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                    .reduce(BigDecimal::add)
+                    .orElse(new BigDecimal(0));
+
+            cart.setTotalQuantity(totalQuantity);
+            cart.setTotalCost(totalCost);
         }
     }
 }
