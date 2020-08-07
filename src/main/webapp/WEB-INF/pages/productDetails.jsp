@@ -6,10 +6,11 @@
  <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
  <tags:master pageTitle="Product Details">
 
+ <p/>
  <c:if test="${not empty param.message}">
      <div class="successfully"> ${param.message} </div>
  </c:if>
- <c:if test="${not empty wrongQuantityError}">
+ <c:if test="${not empty param.wrongQuantityError}">
      <div class="error"> An error occurred! Product not added to cart. </div>
  </c:if>
  <p>
@@ -38,12 +39,13 @@
  </table>
 
  <p> Add to cart: Input quantity <p>
- <form method="post" action="${pageContext.servletContext.contextPath}/products/${product.id}">
-     <input class="quantity" name="quantity" value="${not empty wrongQuantityError ? param.quantity : 1}" />
+ <form method="post" action="${pageContext.servletContext.contextPath}/add-product-to-cart/${product.id}">
+     <input class="quantity" name="quantity" value="${not empty param.wrongQuantityError ? param.quantity : 1}" />
+     <input type="hidden" name="pageUrl" value="${pageContext.servletContext.contextPath}/products/${product.id}" />
      <button>Add</button>
  </form>
- <c:if test="${not empty wrongQuantityError}">
-     <div class="error"> ${wrongQuantityError} </div>
+ <c:if test="${not empty param.wrongQuantityError}">
+     <div class="error"> ${param.wrongQuantityError} </div>
  </c:if>
 
  <tags:recentlyViewedProducts />

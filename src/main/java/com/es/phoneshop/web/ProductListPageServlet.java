@@ -27,11 +27,9 @@ public class ProductListPageServlet extends HttpServlet {
         String query = request.getParameter(QUERY);
         String sortParameter = request.getParameter(SORT);
         String sortOrder = request.getParameter(ORDER);
-
         ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(request.getSession());
 
-        request.setAttribute(VIEWED_PRODUCTS,
-                viewedProductsService.getViewedProducts(viewedProductsUnit));
+        request.setAttribute(VIEWED_PRODUCTS, viewedProductsService.getViewedProducts(viewedProductsUnit));
         request.setAttribute(PRODUCTS, productDao.findProducts(query,
                 Optional.ofNullable(sortParameter).map(SortParameter::valueOf).orElse(null),
                 Optional.ofNullable(sortOrder).map(SortOrder::valueOf).orElse(null)));

@@ -5,7 +5,7 @@
 
  <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
  <tags:master pageTitle="Cart">
-<p/>
+ <p/>
  <c:if test="${empty cart.items}">
      <h1> Your cart is empty. </h1>
  </c:if>
@@ -16,7 +16,7 @@
  <c:if test="${not empty wrongQuantityErrors}">
      <div class="error"> An error occurred! Cart not updated completely. </div>
  </c:if>
-<p/>
+ <p/>
 
  <c:if test="${not empty cart.items}">
      <table>

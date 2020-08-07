@@ -70,6 +70,15 @@
       <url-pattern>/cart/minicart</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+      <servlet-name>addProductToCart</servlet-name>
+      <servlet-class>com.es.phoneshop.web.AddProductToCartServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>addProductToCart</servlet-name>
+      <url-pattern>/add-product-to-cart/*</url-pattern>
+  </servlet-mapping>
+
   <error-page>
       <location>/WEB-INF/pages/errors/errorProductNotFound.jsp</location>
       <exception-type>com.es.phoneshop.model.exceptions.ProductNotFoundException</exception-type>
