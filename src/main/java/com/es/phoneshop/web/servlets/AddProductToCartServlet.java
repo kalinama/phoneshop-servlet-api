@@ -1,7 +1,10 @@
 package com.es.phoneshop.web.servlets;
 
+import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
+import com.es.phoneshop.model.exceptions.OutOfStockException;
+import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
 import com.es.phoneshop.web.services.DefaultQuantityParamProcessingService;
 import com.es.phoneshop.web.services.QuantityParamProcessingService;
 
@@ -11,22 +14,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.*;
+import static com.es.phoneshop.web.constants.ErrorAndSuccessMessageConstants.*;
 
 public class AddProductToCartServlet extends HttpServlet {
 
     private CartService cartService;
     private QuantityParamProcessingService quantityParamService;
+    private List<String> parameterNames;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cartService = DefaultCartService.getInstance();
         quantityParamService = DefaultQuantityParamProcessingService.getInstance();
+        parameterNames = Arrays.asList(SORT, ORDER, QUERY); //specify parameters that must be in url after redirect
     }
 
     @Override
@@ -41,40 +46,54 @@ public class AddProductToCartServlet extends HttpServlet {
         String pageUrlParameter = request.getParameter(PAGE_URL);
         String quantityParameter = request.getParameter(QUANTITY);
         String productId = request.getPathInfo().substring(1);
-        String error = quantityParamService.getErrorTypeOfQuantityForAdd(request, productId, quantityParameter);
 
-        Map<String, String> map = new HashMap<>();
-        initParametersMap(request, map);
+        String error = getErrorMessageOnAddingToCart(request, productId, quantityParameter);
+        Map<String, String> map = getInitializedParametersMap(request, parameterNames);
 
         if (error!=null) {
             map.put(WRONG_QUANTITY_ERROR, error);
             map.put(QUANTITY, quantityParameter);
         }
         else
-            map.put(MESSAGE, "Added to cart successfully");
+            map.put(MESSAGE, ADD_TO_CART_SUCCESSFULLY);
 
-        if (!pageUrlParameter.contains("products/"))
+        if (pageUrlParameter.endsWith("/products"))
             map.put(PRODUCT_ID, productId);
 
         return map;
     }
 
-    private void initParametersMap(HttpServletRequest request, Map<String, String> map) {
-        addParameterToMapIfExist(request, map, SORT); //specify parameters that must be in url after redirect
-        addParameterToMapIfExist(request, map, ORDER);
-        addParameterToMapIfExist(request, map, QUERY);
-    }
-
-    private void addParameterToMapIfExist(HttpServletRequest request, Map<String, String> parametersMap, String parameterName) {
-        String parameter = request.getParameter(parameterName);
-        if (parameter!=null)
-            parametersMap.put(parameterName, parameter);
+    private Map<String, String> getInitializedParametersMap(HttpServletRequest request, List<String> parameterNames) {
+        Map<String, String> map = new HashMap<>();
+        for (String parameterName: parameterNames){
+            String parameter = request.getParameter(parameterName);
+            if (parameter!=null)
+                map.put(parameterName, parameter);
+        }
+        return map;
     }
 
     private String getParametersInLine (Map<String, String> parametersMap){
         return parametersMap.entrySet().stream()
-                .filter(entry -> !entry.getKey().equals(PAGE_URL))
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
     }
+
+    private String getErrorMessageOnAddingToCart(HttpServletRequest request, String idParam, String quantityParam){
+        int quantity;
+        try {
+            quantity = quantityParamService.getNumberFromQuantityParam(request.getLocale(), quantityParam);
+        } catch (WrongItemQuantityException e) {
+            return e.getMessage();
+        }
+
+        try {
+            Cart cart = cartService.getCart(request.getSession());
+            cartService.add(cart, Long.valueOf(idParam), quantity);
+        } catch (OutOfStockException e) {
+            return NOT_ENOUGH_STOCK + e.getAvailableStock();
+        }
+        return null;
+    }
+
 }

@@ -1,22 +1,16 @@
 package com.es.phoneshop.web.services;
 
-import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.service.CartService;
-import com.es.phoneshop.model.cart.service.DefaultCartService;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
 import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Locale;
+
+import static com.es.phoneshop.web.constants.ErrorAndSuccessMessageConstants.*;
 
 public class DefaultQuantityParamProcessingService implements QuantityParamProcessingService {
 
-    private CartService cartService;
-
-    private DefaultQuantityParamProcessingService() {
-        cartService = DefaultCartService.getInstance();
-    }
+    private DefaultQuantityParamProcessingService() {}
 
     private static class DefaultRequestProcessingServiceHolder {
         static final DefaultQuantityParamProcessingService HOLDER_INSTANCE = new DefaultQuantityParamProcessingService();
@@ -27,60 +21,23 @@ public class DefaultQuantityParamProcessingService implements QuantityParamProce
     }
 
     @Override
-    public int getQuantityFromRequest(HttpServletRequest request, String quantityParam) throws WrongItemQuantityException {
+    public int getNumberFromQuantityParam(Locale locale, String quantityParam) throws WrongItemQuantityException {
         int quantity;
         double quantityFractional;
         try {
-            NumberFormat numberFormat = NumberFormat.getInstance(request.getLocale());
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
             quantityFractional = numberFormat.parse(quantityParam).doubleValue();
             quantity = (int) quantityFractional;
         } catch (ParseException e) {
-           throw new WrongItemQuantityException("Not a number");
+           throw new WrongItemQuantityException(NOT_NUMBER);
         }
 
         if (quantityFractional != quantity)
-            throw new WrongItemQuantityException("Can't enter fractional number");
+            throw new WrongItemQuantityException(FRACTIONAL_NUMBER);
 
         if (quantity <= 0)
-            throw new WrongItemQuantityException("Can't add 0 or negative number of items");
+            throw new WrongItemQuantityException(NOT_POSITIVE_NUMBER);
 
         return quantity;
     }
-
-    @Override
-    public String getErrorTypeOfQuantityForAdd(HttpServletRequest request, String idParam, String quantityParam){
-        int quantity;
-        try {
-            quantity = getQuantityFromRequest(request, quantityParam);
-        } catch (WrongItemQuantityException e) {
-            return e.getMessage();
-        }
-
-        try {
-            Cart cart = cartService.getCart(request.getSession());
-            cartService.add(cart, Long.valueOf(idParam), quantity);
-        } catch (OutOfStockException e) {
-            return "Not enough stock. Available: " + e.getAvailableStock();
-        }
-        return null;
-    }
-
-    @Override
-    public String getErrorTypeOfQuantityForUpdate(HttpServletRequest request, String idParam, String quantityParam){
-        int quantity;
-        try {
-            quantity = getQuantityFromRequest(request, quantityParam);
-        } catch (WrongItemQuantityException e) {
-            return e.getMessage();
-        }
-
-        try {
-            Cart cart = cartService.getCart(request.getSession());
-            cartService.update(cart, Long.valueOf(idParam), quantity);
-        } catch (OutOfStockException e) {
-            return "Not enough stock. Available: " + e.getAvailableStock();
-        }
-        return null;
-    }
-
 }

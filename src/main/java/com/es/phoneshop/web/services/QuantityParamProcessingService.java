@@ -1,12 +1,9 @@
 package com.es.phoneshop.web.services;
 
 import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public interface QuantityParamProcessingService {
 
-    int getQuantityFromRequest(HttpServletRequest request, String quantityParameter) throws WrongItemQuantityException;
-    String getErrorTypeOfQuantityForAdd(HttpServletRequest request, String idParam, String quantityParam);
-    String getErrorTypeOfQuantityForUpdate(HttpServletRequest request, String idParam, String quantityParam);
+    int getNumberFromQuantityParam(Locale locale, String quantityParameter) throws WrongItemQuantityException;
 }

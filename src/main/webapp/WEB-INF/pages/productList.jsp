@@ -32,7 +32,7 @@
                  <tags:sortLink sort="price" order="asc"/>
                  <tags:sortLink sort="price" order="desc"/>
              </td>
-             <td/>
+             <td class="quantity">Quantity</td>
              <td/>
          </tr>
      </thead>

@@ -1,7 +1,10 @@
 package com.es.phoneshop.web.servlets.pages;
 
+import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
+import com.es.phoneshop.model.exceptions.OutOfStockException;
+import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
 import com.es.phoneshop.web.services.DefaultQuantityParamProcessingService;
 import com.es.phoneshop.web.services.QuantityParamProcessingService;
 
@@ -15,6 +18,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.*;
+import static com.es.phoneshop.web.constants.ErrorAndSuccessMessageConstants.*;
+
 
 public class CartPageServlet extends HttpServlet {
 
@@ -40,7 +45,7 @@ public class CartPageServlet extends HttpServlet {
         request.setAttribute(WRONG_QUANTITY_ERRORS, errors);
 
         if (errors.isEmpty())
-            response.sendRedirect(request.getContextPath() + "/cart?message=Cart updated successfully");
+            response.sendRedirect(request.getContextPath() + "/cart?" + MESSAGE + "=" + UPDATE_CART_SUCCESSFULLY );
         else
             doGet(request, response);
     }
@@ -52,10 +57,26 @@ public class CartPageServlet extends HttpServlet {
 
         return idParameters.stream()
                 .map(idParam -> new AbstractMap.SimpleImmutableEntry<>(Long.valueOf(idParam),
-                        quantityParamService.getErrorTypeOfQuantityForUpdate(request, idParam,
+                        getErrorMessageOnCartUpdating(request, idParam,
                                 quantityParameters.get(idParameters.indexOf(idParam)))))
                 .filter(entry -> entry.getValue() != null)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    private String getErrorMessageOnCartUpdating(HttpServletRequest request, String idParam, String quantityParam){
+        int quantity;
+        try {
+            quantity = quantityParamService.getNumberFromQuantityParam(request.getLocale(), quantityParam);
+        } catch (WrongItemQuantityException e) {
+            return e.getMessage();
+        }
+
+        try {
+            Cart cart = cartService.getCart(request.getSession());
+            cartService.update(cart, Long.valueOf(idParam), quantity);
+        } catch (OutOfStockException e) {
+            return NOT_ENOUGH_STOCK + e.getAvailableStock();
+        }
+        return null;
+    }
 }
