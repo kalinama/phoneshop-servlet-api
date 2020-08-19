@@ -9,6 +9,7 @@ import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class DefaultCartService implements CartService {
@@ -58,11 +59,11 @@ public class DefaultCartService implements CartService {
             if (quantity > availableQuantity)
                 throw new OutOfStockException(availableQuantity);
 
-            if (!existedCartItem.isPresent()) {
-                CartItem newCartItem = new CartItem(product, quantity);
-                cart.getItems().add(newCartItem);
-            } else
+            if (!existedCartItem.isPresent())
+                cart.getItems().add(new CartItem(product, quantity));
+            else
                 increaseCartItemQuantity(existedCartItem.get(), quantity);
+            recalculateCart(cart);
         }
     }
 
@@ -70,4 +71,42 @@ public class DefaultCartService implements CartService {
         cartItem.setQuantity(cartItem.getQuantity() + quantity);
     }
 
+    @Override
+    public void update(Cart cart, Long productId, int quantity) throws OutOfStockException {
+        synchronized (cart) {
+            if (quantity <= 0) throw new WrongItemQuantityException();
+
+            Product product = productDao.getProduct(productId);
+
+            if (quantity > product.getStock())
+                throw new OutOfStockException(product.getStock());
+
+            cart.getItems().stream()
+                    .filter(item -> item.getProduct().equals(product))
+                    .findAny().get().setQuantity(quantity);
+            recalculateCart(cart);
+        }
+    }
+
+    @Override
+    public void delete(Cart cart, Long productId) {
+        synchronized (cart) {
+            Product product = productDao.getProduct(productId);
+            cart.getItems().removeIf(item -> item.getProduct().equals(product));
+            recalculateCart(cart);
+        }
+    }
+
+    private void recalculateCart(Cart cart) {
+        long totalQuantity = cart.getItems().stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+        BigDecimal totalCost = cart.getItems().stream()
+                .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(new BigDecimal(0));
+
+        cart.setTotalQuantity(totalQuantity);
+        cart.setTotalCost(totalCost);
+    }
 }

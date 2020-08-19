@@ -6,11 +6,11 @@
  <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
  <tags:master pageTitle="Product Details">
 
- <p> Your cart: "${cart}" </p>
- <c:if test="${not empty param.message and empty addToCartError}">
+ <p/>
+ <c:if test="${not empty param.message}">
      <div class="successfully"> ${param.message} </div>
  </c:if>
- <c:if test="${not empty addToCartError}">
+ <c:if test="${not empty param.wrongQuantityError}">
      <div class="error"> An error occurred! Product not added to cart. </div>
  </c:if>
  <p>
@@ -39,12 +39,13 @@
  </table>
 
  <p> Add to cart: Input quantity <p>
- <form method="post">
-     <input class="quantity" name="quantity" value="${not empty addToCartError ? param.quantity : 1}" />
+ <form method="post" action="${pageContext.servletContext.contextPath}/cart/add-product/${product.id}">
+     <input class="quantity" name="quantity" value="${not empty param.wrongQuantityError ? param.quantity : 1}" />
+     <input type="hidden" name="pageCode" value="PDP" />
      <button>Add</button>
  </form>
- <c:if test="${not empty addToCartError}">
-     <div class="error"> ${addToCartError} </div>
+ <c:if test="${not empty param.wrongQuantityError}">
+     <div class="error"> ${param.wrongQuantityError} </div>
  </c:if>
 
  <tags:recentlyViewedProducts />
