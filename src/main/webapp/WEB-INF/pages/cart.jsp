@@ -56,12 +56,24 @@
                     </c:if>
                  </td>
                  <td>
-                    <form method="post" action="${pageContext.servletContext.contextPath}/cart/deleteCartItem/${cartItem.product.id}">
+                    <form method="post" action="${pageContext.servletContext.contextPath}/cart/delete-cart-item/${cartItem.product.id}">
                         <button>Delete</button>
                     </form>
                   </td>
              </tr>
          </c:forEach>
+         <tr bgcolor="#CCCFF">
+            <td/>
+            <td/>
+            <td class="price">
+                Total Cost:
+                <br> <fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${cart.currency.symbol}"/>
+            </td>
+            <td class="quantity">
+                Total quantity: ${cart.totalQuantity}
+            </td>
+            <td/>
+         </tr>
      </table>
 
       <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">

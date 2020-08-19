@@ -13,7 +13,7 @@ public final class AttributeAndParameterConstants {
     //parameters
     public static final String MESSAGE = "message";
     public static final String ORDER = "order";
-    public static final String PAGE_URL = "pageUrl";
+    public static final String PAGE_CODE = "pageCode";
     public static final String PRODUCT_ID = "productId";
     public static final String QUANTITY = "quantity";
     public static final String QUERY = "query";

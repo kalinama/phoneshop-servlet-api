@@ -1,9 +1,9 @@
 package com.es.phoneshop.web.servlets;
 
-import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
 import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+import com.es.phoneshop.web.enums.ApplicationPages;
 import com.es.phoneshop.web.services.QuantityParamProcessingService;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,11 +60,11 @@ public class AddProductToCartServletTest {
     @Test
     public void doPostSuccessWithoutAdditionalParametersForPLPTest() throws ServletException, IOException, OutOfStockException {
         String quantity = "1";
-        String pageUrl = "/phoneshop-servlet-api/products";
+        String pageCode = "PLP";
 
         when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
-        when(request.getParameter(PAGE_URL)).thenReturn(pageUrl);
+        when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -72,7 +72,7 @@ public class AddProductToCartServletTest {
 
         verify(cartService).add(any(), eq(id), eq(Integer.valueOf(quantity)));
         verify(response).sendRedirect(captor.capture());
-        assertTrue(captor.getValue().startsWith(pageUrl));
+        assertTrue(captor.getValue().startsWith(ApplicationPages.valueOf(pageCode).getUrl()));
         assertTrue(captor.getValue().contains(PRODUCT_ID + "=" + id));
         assertTrue(captor.getValue().contains(MESSAGE + "=" + ADD_TO_CART_SUCCESSFULLY));
     }
@@ -80,11 +80,11 @@ public class AddProductToCartServletTest {
     @Test
     public void doPostQuantityErrorWithAdditionalParametersForPLPTest() throws ServletException, IOException, OutOfStockException {
         String quantity = "d";
-        String pageUrl = "/phoneshop-servlet-api/products";
+        String pageCode = "PLP";
 
         when(quantityParamProcessingService.getNumberFromQuantityParam(any(Locale.class), anyString()))
                 .thenThrow(new WrongItemQuantityException(NOT_NUMBER));
-        when(request.getParameter(PAGE_URL)).thenReturn(pageUrl);
+        when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
         when(request.getParameter(SORT)).thenReturn("price");
         when(request.getParameter(ORDER)).thenReturn("desc");
@@ -95,7 +95,7 @@ public class AddProductToCartServletTest {
 
         verify(cartService, never()).add(any(), anyLong(), anyInt());
         verify(response).sendRedirect(captor.capture());
-        assertTrue(captor.getValue().startsWith(pageUrl));
+        assertTrue(captor.getValue().startsWith(ApplicationPages.valueOf(pageCode).getUrl()));
         assertTrue(captor.getValue().contains(ORDER + "=desc"));
         assertTrue(captor.getValue().contains(SORT + "=price"));
         assertTrue(captor.getValue().contains(QUERY + "=samsung"));
@@ -107,11 +107,11 @@ public class AddProductToCartServletTest {
     @Test
     public void doPostSuccessWithoutAdditionalParametersForPDPTest() throws ServletException, IOException, OutOfStockException {
         String quantity = "1";
-        String pageUrl = "/phoneshop-servlet-api/products/" + id;
+        String pageCode = "PDP";
 
         when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
-        when(request.getParameter(PAGE_URL)).thenReturn(pageUrl);
+        when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -119,7 +119,7 @@ public class AddProductToCartServletTest {
 
         verify(cartService).add(any(), eq(id), eq(Integer.valueOf(quantity)));
         verify(response).sendRedirect(captor.capture());
-        assertTrue(captor.getValue().startsWith(pageUrl));
+        assertTrue(captor.getValue().startsWith(ApplicationPages.valueOf(pageCode).getUrl() + id));
         assertFalse(captor.getValue().contains(PRODUCT_ID + "=" + id));
         assertTrue(captor.getValue().contains(MESSAGE + "=" + ADD_TO_CART_SUCCESSFULLY));
     }
@@ -127,13 +127,13 @@ public class AddProductToCartServletTest {
     @Test
     public void doPostErrorOutStockWithoutAdditionalParametersForPDPTest() throws ServletException, IOException, OutOfStockException {
         String quantity = "100";
-        String pageUrl = "/phoneshop-servlet-api/products/" + id;
+        String pageCode = "PDP";
         int availableStock = 10;
 
         when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
         doThrow(new OutOfStockException(availableStock)).when(cartService).add(any(), anyLong(), anyInt());
-        when(request.getParameter(PAGE_URL)).thenReturn(pageUrl);
+        when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -141,7 +141,7 @@ public class AddProductToCartServletTest {
 
         verify(cartService).add(any(), eq(id), eq(Integer.valueOf(quantity)));
         verify(response).sendRedirect(captor.capture());
-        assertTrue(captor.getValue().startsWith(pageUrl));
+        assertTrue(captor.getValue().startsWith(ApplicationPages.valueOf(pageCode).getUrl() + id));
         assertFalse(captor.getValue().contains(PRODUCT_ID + "=" + id));
         assertTrue(captor.getValue().contains(QUANTITY + "=" + quantity));
         assertTrue(captor.getValue().contains(WRONG_QUANTITY_ERROR + "=" + NOT_ENOUGH_STOCK));

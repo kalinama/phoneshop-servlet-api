@@ -54,4 +54,13 @@ public class MiniCartServletTest {
         verify(request).setAttribute(eq(CART), any(Cart.class));
         verify(requestDispatcher).include(request, response);
     }
+
+    @Test
+    public void doPostTest() throws ServletException, IOException {
+        when(cartService.getCart(any(HttpSession.class))).thenReturn(new Cart());
+        miniCartServlet.doPost(request, response);
+
+        verify(request).setAttribute(eq(CART), any(Cart.class));
+        verify(requestDispatcher).include(request, response);
+    }
 }

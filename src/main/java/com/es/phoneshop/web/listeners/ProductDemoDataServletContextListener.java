@@ -14,17 +14,17 @@ import java.util.List;
 
 public class ProductDemoDataServletContextListener implements ServletContextListener {
 
-    private ProductDao productService = ArrayListProductDao.getInstance(); //initialization there need to test this class
+    private ProductDao productDao = ArrayListProductDao.getInstance(); //initialization there need to test this class
                                                                     // => can't mocking static method without PowerMockito
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         boolean insertDemoData = Boolean.valueOf(servletContextEvent.getServletContext().getInitParameter("insertDemoData"));
 
         if(insertDemoData) {
-          // productService = DefaultProductService.getInstance();
+          // productDao = ArrayListProductDao.getInstance();
             for (Product product: getSampleProducts()) {
                 product.setPriceHistory(getSamplePriceHistory(product));
-                productService.save(product);
+                productDao.save(product);
             }
         }
     }

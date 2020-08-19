@@ -98,17 +98,15 @@ public class DefaultCartService implements CartService {
     }
 
     private void recalculateCart(Cart cart) {
-        synchronized (cart) {
-            long totalQuantity = cart.getItems().stream()
-                    .mapToInt(CartItem::getQuantity)
-                    .sum();
-            BigDecimal totalCost = cart.getItems().stream()
-                    .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
-                    .reduce(BigDecimal::add)
-                    .orElse(new BigDecimal(0));
+        long totalQuantity = cart.getItems().stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+        BigDecimal totalCost = cart.getItems().stream()
+                .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(new BigDecimal(0));
 
-            cart.setTotalQuantity(totalQuantity);
-            cart.setTotalCost(totalCost);
-        }
+        cart.setTotalQuantity(totalQuantity);
+        cart.setTotalCost(totalCost);
     }
 }

@@ -39,9 +39,9 @@
  </table>
 
  <p> Add to cart: Input quantity <p>
- <form method="post" action="${pageContext.servletContext.contextPath}/add-product-to-cart/${product.id}">
+ <form method="post" action="${pageContext.servletContext.contextPath}/cart/add-product/${product.id}">
      <input class="quantity" name="quantity" value="${not empty param.wrongQuantityError ? param.quantity : 1}" />
-     <input type="hidden" name="pageUrl" value="${pageContext.servletContext.contextPath}/products/${product.id}" />
+     <input type="hidden" name="pageCode" value="PDP" />
      <button>Add</button>
  </form>
  <c:if test="${not empty param.wrongQuantityError}">

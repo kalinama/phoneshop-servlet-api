@@ -5,6 +5,7 @@ import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
 import com.es.phoneshop.model.exceptions.OutOfStockException;
 import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+import com.es.phoneshop.web.enums.ApplicationPages;
 import com.es.phoneshop.web.services.DefaultQuantityParamProcessingService;
 import com.es.phoneshop.web.services.QuantityParamProcessingService;
 
@@ -36,14 +37,14 @@ public class AddProductToCartServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pageUrlParameter = request.getParameter(PAGE_URL);
-        Map<String, String> parametersMap = getParametersMapFromRequest(request);
+        String pageUrlParameter = getUrlFromRequest(request);
+        Map<String, String> parametersMap = getParametersMapOnAddingToCartFromRequest(request);
         String url = pageUrlParameter + "?" + getParametersInLine(parametersMap);
         response.sendRedirect(url);
     }
 
-    private Map<String, String> getParametersMapFromRequest(HttpServletRequest request) {
-        String pageUrlParameter = request.getParameter(PAGE_URL);
+    private Map<String, String> getParametersMapOnAddingToCartFromRequest(HttpServletRequest request) {
+        String pageUrlParameter = getUrlFromRequest(request);
         String quantityParameter = request.getParameter(QUANTITY);
         String productId = request.getPathInfo().substring(1);
 
@@ -94,6 +95,16 @@ public class AddProductToCartServlet extends HttpServlet {
             return NOT_ENOUGH_STOCK + e.getAvailableStock();
         }
         return null;
+    }
+
+    private String getUrlFromRequest(HttpServletRequest request){
+        String pageCode = request.getParameter(PAGE_CODE);
+        String pageUrl = ApplicationPages.valueOf(pageCode).getUrl();
+
+        if(pageCode.equals("PDP"))
+            pageUrl += request.getPathInfo().substring(1);
+
+        return pageUrl;
     }
 
 }

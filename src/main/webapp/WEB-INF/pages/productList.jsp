@@ -51,11 +51,11 @@
                      <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
                  </a>
              </td>
-             <form method="post" id="add" action="${pageContext.servletContext.contextPath}/add-product-to-cart/${product.id}"/>
+             <form method="post" id="add" action="${pageContext.servletContext.contextPath}/cart/add-product/${product.id}"/>
              <td>
                 <input class="quantity"  name="quantity"
                 value="${not empty param.wrongQuantityError and param.productId eq product.id ? param.quantity : 1}" />
-                <input type="hidden" name="pageUrl" value="${requestScope['javax.servlet.forward.request_uri']}" />
+                <input type="hidden" name="pageCode" value="PLP" />
 
                 <c:set var="importantParams" value="${fn:split('sort,order,query', ',')}" />
                 <tags:hiddenParameters parameters="${importantParams}"/>
@@ -83,4 +83,8 @@
             <input type="hidden" name="${paramWithSameKeyEntry.key}" value="${parameterValue}" />
         </c:forEach>
     </c:forEach>
+ --%>
+
+ <%--
+   ${requestScope['javax.servlet.forward.request_uri']}
  --%>

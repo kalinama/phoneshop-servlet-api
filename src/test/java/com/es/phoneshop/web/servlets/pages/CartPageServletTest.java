@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.RequestDispatcher;
@@ -41,6 +42,7 @@ public class CartPageServletTest {
     QuantityParamProcessingService quantityParamProcessingService;
 
     @InjectMocks
+    @Spy
     CartPageServlet servlet;
 
     @Before
@@ -70,7 +72,7 @@ public class CartPageServletTest {
         verify(cartService, never()).update(any(), anyLong(), anyInt());
         verify(request).setAttribute(eq(WRONG_QUANTITY_ERRORS), captor.capture());
         assertEquals(captor.getValue().get(Long.valueOf("2")), NOT_NUMBER);
-        //verify(servlet).doGet(request, response);
+        verify(servlet).doGet(request, response);
     }
 
     @Test
@@ -91,7 +93,7 @@ public class CartPageServletTest {
         verify(cartService).update(any(), eq(id), eq(quantity));
         verify(request).setAttribute(eq(WRONG_QUANTITY_ERRORS), captor.capture());
         assertEquals(captor.getValue().get(Long.valueOf("2")), NOT_ENOUGH_STOCK + availableStock);
-        //verify(servlet).doGet(request, response);
+        verify(servlet).doGet(request, response);
     }
 
     @Test
