@@ -57,7 +57,7 @@
                  </td>
                  <td>
                     <form method="post" action="${pageContext.servletContext.contextPath}/cart/delete-cart-item/${cartItem.product.id}">
-                        <button>Delete</button>
+                        <button>Delete from cart</button>
                     </form>
                   </td>
              </tr>
@@ -72,13 +72,19 @@
             <td class="quantity">
                 Total quantity: ${cart.totalQuantity}
             </td>
-            <td/>
+            <td>
+                </form>
+                <form action="${pageContext.servletContext.contextPath}/checkout">
+                    <input type="submit" value="Proceed to Checkout" />
+                </form>
+            </td>
          </tr>
      </table>
 
       <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">
-          <button>Update</button>
-      </form>
+          <button>Update cart</button>
+
  </c:if>
+
 
  </tags:master>

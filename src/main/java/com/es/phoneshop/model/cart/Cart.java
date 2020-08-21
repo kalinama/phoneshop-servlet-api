@@ -1,12 +1,14 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.model.item.IdentifiedItem;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-public class Cart implements Serializable {
+public class Cart extends IdentifiedItem implements Serializable {
 
     private List<CartItem> items;
     private long totalQuantity;
@@ -33,6 +35,9 @@ public class Cart implements Serializable {
         return currency;
     }
 
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
     public void setTotalQuantity(long totalQuantity) {
         this.totalQuantity = totalQuantity;
     }

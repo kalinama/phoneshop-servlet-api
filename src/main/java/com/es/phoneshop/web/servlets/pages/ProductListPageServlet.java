@@ -1,9 +1,9 @@
 package com.es.phoneshop.web.servlets.pages;
 
-import com.es.phoneshop.model.enums.SortOrder;
-import com.es.phoneshop.model.enums.SortParameter;
-import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.enums.SortOrder;
+import com.es.phoneshop.model.product.enums.SortParameter;
+import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.product.service.DefaultViewedProductsService;
 import com.es.phoneshop.model.product.service.ViewedProductsService;
@@ -26,7 +26,7 @@ public class ProductListPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String query = request.getParameter(QUERY);
         String sortParameter = request.getParameter(SORT);
-        String sortOrder = request.getParameter(ORDER);
+        String sortOrder = request.getParameter(SORTING_ORDER);
         ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(request.getSession());
 
         request.setAttribute(VIEWED_PRODUCTS, viewedProductsService.getViewedProducts(viewedProductsUnit));

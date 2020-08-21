@@ -8,14 +8,14 @@ import static com.es.phoneshop.web.constants.ErrorAndSuccessMessageConstants.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class DefaultQuantityParamProcessingServiceTest {
+public class DefaultParamProcessingServiceTest {
 
-    private QuantityParamProcessingService quantityParamProcessingService = DefaultQuantityParamProcessingService.getInstance();
+    private ParamProcessingService paramProcessingService = DefaultQuantityParamProcessingService.getInstance();
     private Locale locale = Locale.US;
 
     @Test
     public void getNumberFromQuantityParamTestSuccess() {
-        int quantity = quantityParamProcessingService.getNumberFromQuantityParam(locale, "1,000");
+        int quantity = paramProcessingService.getNumberFromQuantityParam(locale, "1,000");
         assertEquals(quantity, 1000);
     }
 
@@ -23,7 +23,7 @@ public class DefaultQuantityParamProcessingServiceTest {
     public void getNumberFromQuantityParamNotNumberError() {
         String error = "";
         try {
-            quantityParamProcessingService.getNumberFromQuantityParam(locale, "dd");
+            paramProcessingService.getNumberFromQuantityParam(locale, "dd");
         } catch (WrongItemQuantityException e) {
             error = e.getMessage();
         }
@@ -34,7 +34,7 @@ public class DefaultQuantityParamProcessingServiceTest {
     public void getNumberFromQuantityParamFractionalNumberError() {
         String error = "";
         try {
-            quantityParamProcessingService.getNumberFromQuantityParam(locale, "1.9");
+            paramProcessingService.getNumberFromQuantityParam(locale, "1.9");
         } catch (WrongItemQuantityException e) {
             error = e.getMessage();
         }
@@ -45,7 +45,7 @@ public class DefaultQuantityParamProcessingServiceTest {
     public void getNumberFromQuantityParamNegativeNumberError() {
         String error = "";
         try {
-            quantityParamProcessingService.getNumberFromQuantityParam(locale, "-5");
+            paramProcessingService.getNumberFromQuantityParam(locale, "-5");
         } catch (WrongItemQuantityException e) {
             error = e.getMessage();
         }

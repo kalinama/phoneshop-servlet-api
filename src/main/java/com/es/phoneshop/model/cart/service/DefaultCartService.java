@@ -2,8 +2,8 @@ package com.es.phoneshop.model.cart.service;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+import com.es.phoneshop.model.cart.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
@@ -44,11 +44,19 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
+    public void clearCart(HttpSession httpSession) {
+        final Object lock = httpSession.getId().intern();
+        synchronized (lock) {
+            httpSession.setAttribute(CART_SESSION_ATTRIBUTE, null);
+        }
+    }
+
+    @Override
     public void add(Cart cart, Long productId, int quantity) throws OutOfStockException {
         synchronized (cart) {
             if (quantity <=0 ) throw new WrongItemQuantityException();
 
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
             Optional<CartItem> existedCartItem = cart.getItems().stream()
                     .filter(cartItem -> cartItem.getProduct().equals(product))
                     .findAny();
@@ -76,7 +84,7 @@ public class DefaultCartService implements CartService {
         synchronized (cart) {
             if (quantity <= 0) throw new WrongItemQuantityException();
 
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
 
             if (quantity > product.getStock())
                 throw new OutOfStockException(product.getStock());
@@ -91,7 +99,7 @@ public class DefaultCartService implements CartService {
     @Override
     public void delete(Cart cart, Long productId) {
         synchronized (cart) {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
             cart.getItems().removeIf(item -> item.getProduct().equals(product));
             recalculateCart(cart);
         }

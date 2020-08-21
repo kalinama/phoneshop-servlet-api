@@ -1,24 +1,24 @@
 package com.es.phoneshop.model.product.dao;
 
-import com.es.phoneshop.model.enums.SortOrder;
-import com.es.phoneshop.model.enums.SortParameter;
-import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.item.dao.ArrayListDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.enums.SortOrder;
+import com.es.phoneshop.model.product.enums.SortParameter;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-public class ArrayListProductDao implements ProductDao {
+public class ArrayListProductDao extends ArrayListDao<Product> implements ProductDao {
 
     private static final String SEPARATOR = " ";
 
-    private List<Product> products;
-    private long idMaxValue;
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private ArrayListProductDao() { products = new ArrayList<>();}
+    private ArrayListProductDao() {
+        super(Product.class);
+    }
 
     private static class ArrayListProductDaoHolder {
         static final ArrayListProductDao HOLDER_INSTANCE = new ArrayListProductDao();
@@ -29,15 +29,11 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public Product getProduct(Long id) throws ProductNotFoundException {
+    public Product getById(Long id) {
         lock.readLock().lock();
         try {
-            return products.stream()
-                    .filter(product -> product.getId().equals(id))
-                    .findAny()
-                    .orElseThrow(() -> new ProductNotFoundException(id.toString()));
-        }
-        finally {
+            return super.getById(id);
+        } finally {
             lock.readLock().unlock();
         }
     }
@@ -47,7 +43,7 @@ public class ArrayListProductDao implements ProductDao {
         lock.readLock().lock();
         try {
             Comparator<Product> comparator = getComparatorForProductList(query,sortParameter,sortOrder);
-            return products.stream()
+            return items.stream()
                     .filter(product -> query==null || query.isEmpty()
                             || isProductMatchedQuery(product, query.toLowerCase()))
                     .filter(product -> product.getPrice() != null)
@@ -105,18 +101,7 @@ public class ArrayListProductDao implements ProductDao {
     public void save(Product product) {
         lock.writeLock().lock();
         try {
-            if (product.getId()!=null) {
-                products.stream()
-                        .filter(existedProduct -> existedProduct.getId().equals(product.getId()))
-                        .findAny()
-                        .ifPresent(productWithSameId -> products.remove(productWithSameId));
-
-                if (idMaxValue < product.getId())
-                    idMaxValue = product.getId();
-            } else
-                product.setId(++idMaxValue);
-
-            products.add(product);
+            super.save(product);
         } finally {
             lock.writeLock().unlock();
         }
@@ -126,12 +111,8 @@ public class ArrayListProductDao implements ProductDao {
     public void delete(Long id) {
         lock.writeLock().lock();
         try {
-           products.stream()
-                   .filter(product -> product.getId().equals(id))
-                   .findAny()
-                   .ifPresent(productToRemove -> products.remove(productToRemove));
-        }
-        finally {
+            super.delete(id);
+        } finally {
             lock.writeLock().unlock();
         }
     }
