@@ -8,18 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ItemType {
+
     PRODUCT(Product.class), ORDER(Order.class);
 
+    private static final Map<String, ItemType> map;
     private String className;
+
+    static {
+        map = new HashMap<>(values().length, 1);
+        for (ItemType type : values())
+            map.put(type.className, type);
+    }
 
     ItemType(Class<? extends IdentifiedItem> clazz){
         this.className = clazz.getSimpleName();
-    }
-
-    private static final Map<String, ItemType> map = new HashMap<>(values().length, 1);
-
-    static {
-        for (ItemType type : values()) map.put(type.className, type);
     }
 
     public static ItemType of(String className) {

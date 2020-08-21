@@ -1,4 +1,4 @@
-package com.es.phoneshop.web.services;
+package com.es.phoneshop.model.services.dataprocessing;
 
 import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 

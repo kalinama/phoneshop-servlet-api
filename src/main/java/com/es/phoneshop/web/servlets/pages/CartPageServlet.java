@@ -5,8 +5,8 @@ import com.es.phoneshop.model.cart.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
-import com.es.phoneshop.web.services.DefaultParamProcessingService;
-import com.es.phoneshop.web.services.ParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.DefaultParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

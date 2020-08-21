@@ -3,12 +3,11 @@ package com.es.phoneshop.web.servlets.pages;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
-import com.es.phoneshop.model.order.enums.PaymentMethod;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.order.service.DefaultOrderService;
 import com.es.phoneshop.model.order.service.OrderService;
-import com.es.phoneshop.web.services.DefaultParamProcessingService;
-import com.es.phoneshop.web.services.ParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.DefaultParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
@@ -53,7 +51,7 @@ public class CheckoutPageServlet extends HttpServlet {
         request.setAttribute(ORDER_ERRORS, errors);
 
         if(errors.isEmpty()) {
-            setOrderFields(order, request);
+            setOrderCustomerFields(order, request);
             orderService.placeOrder(order);
             cartService.clearCart(request.getSession());
             response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
@@ -81,13 +79,12 @@ public class CheckoutPageServlet extends HttpServlet {
             errors.put(paramName, error);
     }
 
-    private void setOrderFields(Order order, HttpServletRequest request){
-        order.setFirstName(request.getParameter(FIRST_NAME));
-        order.setLastName(request.getParameter(LAST_NAME));
-        order.setPhone(request.getParameter(PHONE));
-        order.setDeliveryDate(LocalDate.parse(request.getParameter(DELIVERY_DATE)));
-        order.setDeliveryAddress(request.getParameter(DELIVERY_ADDRESS));
-        order.setPaymentMethod(PaymentMethod.valueOf(request.getParameter(PAYMENT_METHOD)));
+    private void setOrderCustomerFields(Order order, HttpServletRequest request){
+        Map<String, String> parametersMap = new HashMap<>();
+        List<String> paramNames = Arrays.asList(FIRST_NAME, LAST_NAME, PHONE, DELIVERY_DATE, DELIVERY_ADDRESS, PAYMENT_METHOD);
+        for (String paramName: paramNames)
+            parametersMap.put(paramName, request.getParameter(paramName));
+        orderService.setCustomerData(order, parametersMap);
     }
 
 }
