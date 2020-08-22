@@ -83,8 +83,8 @@
 
       <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">
           <button>Update cart</button>
+      </form>
 
  </c:if>
-
 
  </tags:master>

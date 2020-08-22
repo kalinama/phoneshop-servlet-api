@@ -10,7 +10,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
-public class Product extends IdentifiedItem implements Serializable {
+public class Product extends IdentifiedItem {
     private String code;
     private String description;
     /** null means there is no price because the product is outdated or new */

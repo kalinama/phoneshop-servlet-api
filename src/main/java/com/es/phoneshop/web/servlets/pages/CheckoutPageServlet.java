@@ -38,6 +38,7 @@ public class CheckoutPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request.getSession());
         request.setAttribute(ORDER, orderService.getOrder(cart));
+        request.setAttribute(PAYMENT_METHODS, orderService.getPaymentMethods());
         request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
     }
 
@@ -45,8 +46,6 @@ public class CheckoutPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request.getSession());
         Order order =  orderService.getOrder(cart);
-        request.setAttribute(ORDER, orderService.getOrder(cart));
-
         Map<String,String> errors = getParametersErrorsFromRequest(request);
         request.setAttribute(ORDER_ERRORS, errors);
 
@@ -57,7 +56,7 @@ public class CheckoutPageServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
         }
         else
-            request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
+            doGet(request, response);
     }
 
     private Map<String,String> getParametersErrorsFromRequest(HttpServletRequest request){

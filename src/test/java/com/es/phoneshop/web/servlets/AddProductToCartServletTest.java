@@ -1,10 +1,10 @@
 package com.es.phoneshop.web.servlets;
 
+import com.es.phoneshop.model.cart.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.cart.service.CartService;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
 import com.es.phoneshop.web.enums.ApplicationPages;
-import com.es.phoneshop.web.services.QuantityParamProcessingService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class AddProductToCartServletTest {
     @Mock
     HttpServletResponse response;
     @Mock
-    QuantityParamProcessingService quantityParamProcessingService;
+    ParamProcessingService quantityParamProcessingService;
     @Mock
     CartService cartService;
 
@@ -62,7 +62,7 @@ public class AddProductToCartServletTest {
         String quantity = "1";
         String pageCode = "PLP";
 
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
         when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
@@ -82,7 +82,7 @@ public class AddProductToCartServletTest {
         String quantity = "d";
         String pageCode = "PLP";
 
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(Locale.class), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(Locale.class), anyString()))
                 .thenThrow(new WrongItemQuantityException(NOT_NUMBER));
         when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
@@ -109,7 +109,7 @@ public class AddProductToCartServletTest {
         String quantity = "1";
         String pageCode = "PDP";
 
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
         when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);
         when(request.getParameter(QUANTITY)).thenReturn(quantity);
@@ -130,7 +130,7 @@ public class AddProductToCartServletTest {
         String pageCode = "PDP";
         int availableStock = 10;
 
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenReturn(Integer.valueOf(quantity));
         doThrow(new OutOfStockException(availableStock)).when(cartService).add(any(), anyLong(), anyInt());
         when(request.getParameter(PAGE_CODE)).thenReturn(pageCode);

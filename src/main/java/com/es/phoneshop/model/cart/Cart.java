@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-public class Cart extends IdentifiedItem implements Serializable {
+public class Cart extends IdentifiedItem {
 
     private List<CartItem> items;
-    private long totalQuantity;
+    private int totalQuantity;
     private BigDecimal totalCost;
     private Currency currency = Currency.getInstance("USD");
 
@@ -23,7 +23,7 @@ public class Cart extends IdentifiedItem implements Serializable {
         return items;
     }
 
-    public long getTotalQuantity() {
+    public int getTotalQuantity() {
         return totalQuantity;
     }
 
@@ -38,7 +38,7 @@ public class Cart extends IdentifiedItem implements Serializable {
     public void setItems(List<CartItem> items) {
         this.items = items;
     }
-    public void setTotalQuantity(long totalQuantity) {
+    public void setTotalQuantity(int totalQuantity) {
         this.totalQuantity = totalQuantity;
     }
 

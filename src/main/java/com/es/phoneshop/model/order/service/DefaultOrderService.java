@@ -9,6 +9,8 @@ import com.es.phoneshop.model.order.enums.PaymentMethod;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -66,5 +68,10 @@ public class DefaultOrderService implements OrderService {
             order.setDeliveryAddress(parametersMap.get(DELIVERY_ADDRESS));
             order.setPaymentMethod(PaymentMethod.valueOf(parametersMap.get(PAYMENT_METHOD)));
         }
+    }
+
+    @Override
+    public List<PaymentMethod> getPaymentMethods() {
+        return Arrays.asList(PaymentMethod.values());
     }
 }

@@ -6,4 +6,4 @@
     <td>
        ${order[paramName]}
     </td>
-</tr>
+ </tr>

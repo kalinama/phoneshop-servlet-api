@@ -1,9 +1,9 @@
 package com.es.phoneshop.web.servlets.pages;
 
+import com.es.phoneshop.model.cart.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.cart.service.CartService;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
-import com.es.phoneshop.web.services.QuantityParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class CartPageServletTest {
     @Mock
     CartService cartService;
     @Mock
-    QuantityParamProcessingService quantityParamProcessingService;
+    ParamProcessingService quantityParamProcessingService;
 
     @InjectMocks
     @Spy
@@ -60,7 +60,7 @@ public class CartPageServletTest {
 
     @Test
     public void doPostErrorQuantityTest() throws ServletException, IOException, OutOfStockException {
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenThrow(new WrongItemQuantityException(NOT_NUMBER));
 
         when(request.getParameterValues(QUANTITY)).thenReturn(new String[]{"100"});
@@ -84,7 +84,7 @@ public class CartPageServletTest {
 
         when(request.getParameterValues(QUANTITY)).thenReturn(new String[]{String.valueOf(quantity)});
         when(request.getParameterValues(PRODUCT_ID)).thenReturn(new String[]{String.valueOf(id)});
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenReturn(quantity);
 
         ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
@@ -102,7 +102,7 @@ public class CartPageServletTest {
         long id = 2L;
         when(request.getParameterValues(QUANTITY)).thenReturn(new String[]{String.valueOf(quantity)});
         when(request.getParameterValues(PRODUCT_ID)).thenReturn(new String[]{String.valueOf(id)});
-        when(quantityParamProcessingService.getNumberFromQuantityParam(any(), anyString()))
+        when(quantityParamProcessingService.getQuantityFromParam(any(), anyString()))
                 .thenReturn(quantity);
 
         ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);

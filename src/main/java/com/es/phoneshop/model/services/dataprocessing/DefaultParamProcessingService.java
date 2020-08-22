@@ -47,7 +47,7 @@ public class DefaultParamProcessingService implements ParamProcessingService {
     @Override
     public String getErrorOnEmptyParameter(String param) {
         if (param == null || param.isEmpty())
-            return "Value is empty";
+            return EMPTY_VALUE;
 
         return null;
     }
@@ -58,7 +58,7 @@ public class DefaultParamProcessingService implements ParamProcessingService {
             return getErrorOnEmptyParameter(phoneParam);
 
         if (!phoneParam.matches("\\+375[\\-]?[0-9]{2}[\\-]?[0-9]{3}[\\-]?[0-9]{2}[\\-]?[0-9]{2}"))
-            return "The entered value does not match the format";
+            return NOT_MATCH_FORMAT;
 
         return null;
     }
@@ -71,7 +71,7 @@ public class DefaultParamProcessingService implements ParamProcessingService {
         try {
             LocalDate.parse(dateParam);
         } catch (DateTimeParseException e) {
-            return "The entered date value not correct";
+            return NOT_CORRECT_DATE_VALUE;
         }
         return null;
     }
@@ -84,7 +84,7 @@ public class DefaultParamProcessingService implements ParamProcessingService {
         try {
             PaymentMethod.valueOf(paymentMethodParam);
         } catch (IllegalArgumentException e) {
-            return "The entered value not correct";
+            return NOT_CORRECT_VALUE;
         }
         return null;
     }

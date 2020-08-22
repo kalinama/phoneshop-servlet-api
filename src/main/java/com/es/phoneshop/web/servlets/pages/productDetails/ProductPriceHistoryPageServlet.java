@@ -2,13 +2,12 @@ package com.es.phoneshop.web.servlets.pages.productDetails;
 
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
+
 import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 
 public class ProductPriceHistoryPageServlet extends HttpServlet {

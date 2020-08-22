@@ -9,7 +9,7 @@ import java.util.Map;
 
 public enum ItemType {
 
-    PRODUCT(Product.class), ORDER(Order.class);
+    PRODUCT(Product.class), ORDER(Order.class), ITEM(IdentifiedItem.class);
 
     private static final Map<String, ItemType> map;
     private String className;
@@ -24,10 +24,10 @@ public enum ItemType {
         this.className = clazz.getSimpleName();
     }
 
-    public static ItemType of(String className) {
-        ItemType result = map.get(className);
+    public static ItemType of(Class<? extends IdentifiedItem> clazz) {
+        ItemType result = map.get(clazz.getSimpleName());
         if (result == null) {
-            throw new IllegalArgumentException("Invalid class name: " + className);
+            return ITEM;
         }
         return result;
     }

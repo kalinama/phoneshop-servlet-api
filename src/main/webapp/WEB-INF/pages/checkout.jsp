@@ -7,8 +7,12 @@
  <jsp:useBean id="now" class="java.util.Date" scope="request"/>
  <tags:master pageTitle="Checkout page">
  <p/>
- <tags:orderProductsTable/>
 
+  <c:if test="${not empty orderErrors}">
+      <div class="error"> An error occurred! Order not placed. </div>
+  </c:if>
+
+ <tags:orderProductsTable/>
  <form method="post" action="${pageContext.servletContext.contextPath}/checkout">
     <table>
         <tags:customerDataInputRow name="First Name" paramName="firstName"/>
@@ -18,7 +22,7 @@
             <td>
                 <font size="3" color="grey"> +375-xx-xxx-xx-xx </font> </br>
                 <input type="tel" pattern="\+375[\-]?[0-9]{2}[\-]?[0-9]{3}[\-]?[0-9]{2}[\-]?[0-9]{2}"
-                    name="phone" value="${not empty param['phone'] ? param['phone'] : ''}" placeholder="+375-44-456-89-01"/>
+                    name="phone" value="${param['phone']}" placeholder="+375-44-456-89-01"/>
                 <c:if test="${not empty orderErrors['phone']}">
                     <div class="error"> ${orderErrors['phone']} </div>
                 </c:if>
@@ -41,8 +45,9 @@
             <td>
                 <select name="paymentMethod">
                     <option disabled selected>Choose payment method</option>
-                    <option value="CASH">Cash</option>
-                    <option value="CREDIT_CARD">Credit card</option>
+                    <c:forEach var="method" items="${paymentMethods}" varStatus="loop">
+                        <option value="${method}" ${param['paymentMethod'] == method ? 'selected' : ''}>${method.value}</option>
+                    </c:forEach>
                 </select>
                 <c:if test="${not empty orderErrors['paymentMethod']}">
                     <div class="error"> ${orderErrors['paymentMethod']} </div>

@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultDosProtectionService implements DosProtectionService {
 
     private Map<String, AtomicInteger> userRequestMap;
-    private static final int MAX_QUANTITY_OF_REQUESTS = 20;
+    private static final int MAX_QUANTITY_OF_REQUESTS = 200;
     private static final int TIMER = 60000;
     private volatile long lastCleaningTime;
 

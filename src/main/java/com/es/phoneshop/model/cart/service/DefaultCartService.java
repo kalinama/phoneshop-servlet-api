@@ -106,7 +106,7 @@ public class DefaultCartService implements CartService {
     }
 
     private void recalculateCart(Cart cart) {
-        long totalQuantity = cart.getItems().stream()
+        int totalQuantity = cart.getItems().stream()
                 .mapToInt(CartItem::getQuantity)
                 .sum();
         BigDecimal totalCost = cart.getItems().stream()

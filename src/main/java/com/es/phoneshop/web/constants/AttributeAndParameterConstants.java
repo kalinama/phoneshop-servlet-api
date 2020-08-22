@@ -6,6 +6,7 @@ public final class AttributeAndParameterConstants {
     public static final String CART = "cart";
     public static final String ORDER = "order";
     public static final String ORDER_ERRORS = "orderErrors";
+    public static final String PAYMENT_METHODS = "paymentMethods";
     public static final String PRODUCT = "product";
     public static final String PRODUCTS = "products";
     public static final String VIEWED_PRODUCTS = "viewedProducts";

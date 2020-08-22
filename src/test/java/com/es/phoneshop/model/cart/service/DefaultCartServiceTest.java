@@ -2,8 +2,9 @@ package com.es.phoneshop.model.cart.service;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+
+import com.es.phoneshop.model.cart.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import org.junit.Before;
@@ -83,7 +84,7 @@ public class DefaultCartServiceTest {
     @Test
     public void addNewProductToCartEnoughStockTest() throws OutOfStockException {
         Product product = new Product(2L,"sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg");
-        when(productDao.getProduct(product.getId())).thenReturn(product);
+        when(productDao.getById(product.getId())).thenReturn(product);
 
         cartService.add(cart, product.getId(), product.getStock());
         CartItem testCartItem = cart.getItems().get(cart.getItems().size() - 1);
@@ -95,7 +96,7 @@ public class DefaultCartServiceTest {
     @Test(expected = OutOfStockException.class)
     public void addNewProductToCartNotEnoughStockTest() throws OutOfStockException {
         Product product = new Product(2L,"sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg");
-        when(productDao.getProduct(product.getId())).thenReturn(product);
+        when(productDao.getById(product.getId())).thenReturn(product);
 
         cartService.add(cart, product.getId(), product.getStock()+1);
     }
@@ -106,7 +107,7 @@ public class DefaultCartServiceTest {
         Product testProduct = testCartItem.getProduct();
         int availableQuantity = testProduct.getStock() - testCartItem.getQuantity();
 
-        when(productDao.getProduct(testProduct.getId())).thenReturn(testProduct);
+        when(productDao.getById(testProduct.getId())).thenReturn(testProduct);
         cartService.add(cart, testProduct.getId(), availableQuantity);
 
         assertEquals(testCartItem.getQuantity(), testProduct.getStock());
@@ -118,7 +119,7 @@ public class DefaultCartServiceTest {
         Product testProduct = testCartItem.getProduct();
         int availableQuantity = testProduct.getStock() - testCartItem.getQuantity();
 
-        when(productDao.getProduct(testProduct.getId())).thenReturn(testProduct);
+        when(productDao.getById(testProduct.getId())).thenReturn(testProduct);
         cartService.add(cart, testProduct.getId(), availableQuantity + 1);
     }
 
@@ -132,7 +133,7 @@ public class DefaultCartServiceTest {
         CartItem testCartItem = cart.getItems().get(0);
         Product testProduct = testCartItem.getProduct();
 
-        when(productDao.getProduct(testProduct.getId())).thenReturn(testProduct);
+        when(productDao.getById(testProduct.getId())).thenReturn(testProduct);
         cartService.update(cart, testProduct.getId(), testProduct.getStock());
 
         assertEquals(testCartItem.getQuantity(), testProduct.getStock());
@@ -143,7 +144,7 @@ public class DefaultCartServiceTest {
         CartItem testCartItem = cart.getItems().get(0);
         Product testProduct = testCartItem.getProduct();
 
-        when(productDao.getProduct(testProduct.getId())).thenReturn(testProduct);
+        when(productDao.getById(testProduct.getId())).thenReturn(testProduct);
         cartService.update(cart, testProduct.getId(), testProduct.getStock() + 1);
     }
 
@@ -157,7 +158,7 @@ public class DefaultCartServiceTest {
         int oldSize = cart.getItems().size();
         CartItem testCartItem = cart.getItems().get(0);
         Product testProduct = testCartItem.getProduct();
-        when(productDao.getProduct(testProduct.getId())).thenReturn(testProduct);
+        when(productDao.getById(testProduct.getId())).thenReturn(testProduct);
 
         cartService.delete(cart, testProduct.getId());
         assertFalse(cart.getItems().contains(testCartItem));
@@ -168,7 +169,7 @@ public class DefaultCartServiceTest {
     public void deleteNotExistedCartItemTest() {
         int oldSize = cart.getItems().size();
         Product product = new Product(2L,"sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg");
-        when(productDao.getProduct(product.getId())).thenReturn(null);
+        when(productDao.getById(product.getId())).thenReturn(null);
 
         cartService.delete(cart, product.getId());
         assertEquals(oldSize, cart.getItems().size());
@@ -178,12 +179,12 @@ public class DefaultCartServiceTest {
     public void recalculateCartTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, OutOfStockException {
         int quantityNewProduct = 3;
         Product newProduct = new Product(2L,"sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
-        when(productDao.getProduct(newProduct.getId())).thenReturn(newProduct);
+        when(productDao.getById(newProduct.getId())).thenReturn(newProduct);
         cartService.add(cart, newProduct.getId(), quantityNewProduct);
 
         int quantityExistedProduct = 3;
         Product existedProduct = cart.getItems().get(0).getProduct();
-        when(productDao.getProduct(existedProduct.getId())).thenReturn(existedProduct);
+        when(productDao.getById(existedProduct.getId())).thenReturn(existedProduct);
         cartService.update(cart, existedProduct.getId(), quantityExistedProduct);
 
         Method recalculateCart = DefaultCartService.class.getDeclaredMethod("recalculateCart", Cart.class);

@@ -1,6 +1,8 @@
 package com.es.phoneshop.model.item;
 
-public abstract class IdentifiedItem {
+import java.io.Serializable;
+
+public abstract class IdentifiedItem implements Serializable{
     private Long id;
 
     public IdentifiedItem(){}

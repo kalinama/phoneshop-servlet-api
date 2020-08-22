@@ -13,7 +13,8 @@ public class ItemNotFoundExceptionFactory {
                 return new ProductNotFoundException(id.toString());
             case ORDER:
                 return new OrderNotFoundException(id.toString());
-
+            case ITEM:
+                return new ItemNotFoundException(id.toString());
             default:
                 throw new IllegalArgumentException("Wrong item type:" + itemType);
         }

@@ -14,7 +14,12 @@
         <tags:customerDataRow name="Phone" paramName="phone"/>
         <tags:customerDataRow name="Delivery date" paramName="deliveryDate"/>
         <tags:customerDataRow name="Delivery address" paramName="deliveryAddress"/>
-        <tags:customerDataRow name="Payment method" paramName="paymentMethod"/>
+         <tr>
+            <td>Payment method</td>
+            <td>
+               ${order['paymentMethod'].value}
+            </td>
+         </tr>
    </table>
    </br>
  </tags:master>

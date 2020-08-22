@@ -25,7 +25,7 @@ public abstract class ArrayListDao<T extends IdentifiedItem> implements Dao<T> {
                     .filter(item -> item.getId().equals(id))
                     .findAny()
                     .orElseThrow(() -> ItemNotFoundExceptionFactory.getException(
-                            ItemType.of(type.getSimpleName()), id)
+                            ItemType.of(type), id)
                     );
     }
 
