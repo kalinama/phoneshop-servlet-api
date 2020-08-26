@@ -109,7 +109,7 @@ public class DefaultParamProcessingService implements ParamProcessingService {
     }
 
     @Override
-    public String getErrorQuantityParameter(Locale locale, String quantityParam) {
+    public String getErrorOnQuantityParameter(Locale locale, String quantityParam) {
         if (getErrorOnEmptyParameter(quantityParam)!= null)
             return null;
         try {

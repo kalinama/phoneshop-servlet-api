@@ -99,7 +99,7 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
             return items.stream()
                     .filter(product -> code.isEmpty() || product.getCode().equals(code))
                     .filter(product -> priceMax == null || product.getPrice().compareTo(priceMax) <=0)
-                    .filter(product -> priceMin == null || product.getPrice().compareTo(priceMin) > 0 )
+                    .filter(product -> priceMin == null || product.getPrice().compareTo(priceMin) >= 0 )
                     .filter(product -> stockMin == null || product.getStock() >= stockMin)
                     .collect(Collectors.toList());
         }

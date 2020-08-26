@@ -13,7 +13,7 @@ public interface ParamProcessingService {
     String getErrorOnPhoneParameter(String phoneParam);
     String getErrorOnDateParameter(String dateParam);
     String getErrorOnPaymentMethodParameter(String paymentMethodParam);
-    String getErrorQuantityParameter(Locale locale, String quantityParam);
+    String getErrorOnQuantityParameter(Locale locale, String quantityParam);
     String getErrorOnPrice(Locale locale, String priceParam);
 
 }

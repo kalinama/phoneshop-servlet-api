@@ -5,8 +5,6 @@ import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.services.dataprocessing.DefaultParamProcessingService;
 import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
-import com.es.phoneshop.web.servlets.header.MiniCartServlet;
-import com.sun.net.httpserver.HttpServer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,10 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.UnaryOperator;
 
 import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.*;
-import static com.es.phoneshop.web.constants.AttributeAndParameterConstants.PAYMENT_METHOD;
 
 public class AdvancedSearchPageServlet extends HttpServlet {
 
@@ -43,7 +39,6 @@ public class AdvancedSearchPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String,String> errors = getParametersErrorsFromRequest(request);
         request.setAttribute(SEARCH_ERRORS, errors);
-        AdvancedProductDescription advancedProductDescription;
 
         if(errors.isEmpty()) {
             request.setAttribute(PRODUCTS, productDao.findProducts(getAdvancedDescription(request)));
@@ -62,7 +57,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
         error = paramProcessingService.getErrorOnPrice(locale, request.getParameter(MAX_PRICE));
         if(error != null)
             errors.put(MAX_PRICE, error);
-        error = paramProcessingService.getErrorOnPrice(locale, request.getParameter(MIN_STOCK));
+        error = paramProcessingService.getErrorOnQuantityParameter(locale, request.getParameter(MIN_STOCK));
         if(error != null)
             errors.put(MIN_STOCK, error);
 
