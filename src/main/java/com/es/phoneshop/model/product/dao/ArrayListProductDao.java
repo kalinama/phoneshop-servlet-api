@@ -1,10 +1,12 @@
 package com.es.phoneshop.model.product.dao;
 
 import com.es.phoneshop.model.item.dao.ArrayListDao;
+import com.es.phoneshop.model.product.AdvancedProductDescription;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.enums.SortOrder;
 import com.es.phoneshop.model.product.enums.SortParameter;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -83,5 +85,26 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
 
         return  quantityOfCompleteMatchedWords
                 + (double) quantityOfPartialMatchedWords / quantityOfWordInDescription;
+    }
+
+    @Override
+    public List<Product> findProducts(AdvancedProductDescription advancedProductDescription) {
+        lock.readLock().lock();
+        try {
+            String code = advancedProductDescription.getCode();
+            BigDecimal priceMax =advancedProductDescription.getPriceMax();
+            BigDecimal priceMin = advancedProductDescription.getPriceMin();
+            Integer stockMin = advancedProductDescription.getStockMin();
+
+            return items.stream()
+                    .filter(product -> code.isEmpty() || product.getCode().equals(code))
+                    .filter(product -> priceMax == null || product.getPrice().compareTo(priceMax) <=0)
+                    .filter(product -> priceMin == null || product.getPrice().compareTo(priceMin) > 0 )
+                    .filter(product -> stockMin == null || product.getStock() >= stockMin)
+                    .collect(Collectors.toList());
+        }
+        finally {
+            lock.readLock().unlock();
+        }
     }
 }

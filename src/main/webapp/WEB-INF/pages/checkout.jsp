@@ -16,8 +16,8 @@
  <br>
  <form method="post" action="${pageContext.servletContext.contextPath}/checkout">
     <table>
-        <tags:customerDataInputRow name="First Name" paramName="firstName" orderErrors="${orderErrors}"/>
-        <tags:customerDataInputRow name="Last Name" paramName="lastName" orderErrors="${orderErrors}"/>
+        <tags:customerDataInputRow name="First Name" paramName="firstName" errors="${orderErrors}"/>
+        <tags:customerDataInputRow name="Last Name" paramName="lastName" errors="${orderErrors}"/>
         <tr>
             <td> Phone <span style="color: red; ">*</span> </td>
             <td>
@@ -40,7 +40,7 @@
                 </c:if>
             </td>
         </tr>
-        <tags:customerDataInputRow name="Delivery address" paramName="deliveryAddress" orderErrors="${orderErrors}"/>
+        <tags:customerDataInputRow name="Delivery address" paramName="deliveryAddress" errors="${orderErrors}"/>
         <tr>
             <td>Payment method<span style="color: red; ">*</span> </td>
             <td>

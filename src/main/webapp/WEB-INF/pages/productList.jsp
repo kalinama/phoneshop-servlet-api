@@ -8,6 +8,11 @@
  <tags:master pageTitle="Product List">
 
  <p> Welcome to Expert-Soft training! </p>
+
+ <form action="${pageContext.servletContext.contextPath}/advanced-search">
+     <input type="submit" value="Advanced search" />
+ </form>
+
  <form>
      <input name="query" value="${param.query}" />
      <button>Search</button>
