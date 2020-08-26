@@ -6,6 +6,8 @@ public final class AttributeAndParameterConstants {
     public static final String CART = "cart";
     public static final String ORDER = "order";
     public static final String ORDER_ERRORS = "orderErrors";
+    public static final String SEARCH_ERRORS = "searchErrors";
+
     public static final String PAYMENT_METHODS = "paymentMethods";
     public static final String PRODUCT = "product";
     public static final String PRODUCTS = "products";
@@ -28,5 +30,11 @@ public final class AttributeAndParameterConstants {
     public static final String DELIVERY_DATE = "deliveryDate";
     public static final String DELIVERY_ADDRESS = "deliveryAddress";
     public static final String PAYMENT_METHOD = "paymentMethod";
+
+    public static final String PRODUCT_CODE = "productCode";
+    public static final String MIN_PRICE = "minPrice";
+    public static final String MAX_PRICE = "maxPrice";
+    public static final String MIN_STOCK = "minStock";
+
 
 }

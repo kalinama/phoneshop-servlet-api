@@ -3,6 +3,7 @@ package com.es.phoneshop.model.services.dataprocessing;
 import com.es.phoneshop.model.order.enums.PaymentMethod;
 import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -42,6 +43,24 @@ public class DefaultParamProcessingService implements ParamProcessingService {
             throw new WrongItemQuantityException(NOT_POSITIVE_NUMBER);
 
         return quantity;
+    }
+
+    @Override
+    public BigDecimal getPriceFromParam(Locale locale, String priceParam) throws WrongItemQuantityException {
+        if (priceParam == null || priceParam.isEmpty())
+            return null;
+        double price;
+        try {
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            price = numberFormat.parse(priceParam).doubleValue();
+        } catch (ParseException e) {
+            throw new WrongItemQuantityException(NOT_NUMBER);
+        }
+
+        if (price <= 0)
+            throw new WrongItemQuantityException(NOT_POSITIVE_NUMBER);
+
+        return new BigDecimal(price);
     }
 
     @Override
@@ -85,6 +104,30 @@ public class DefaultParamProcessingService implements ParamProcessingService {
             PaymentMethod.valueOf(paymentMethodParam);
         } catch (IllegalArgumentException e) {
             return NOT_CORRECT_VALUE;
+        }
+        return null;
+    }
+
+    @Override
+    public String getErrorOnQuantityParameter(Locale locale, String quantityParam) {
+        if (getErrorOnEmptyParameter(quantityParam)!= null)
+            return null;
+        try {
+            getQuantityFromParam(locale, quantityParam);
+        } catch (WrongItemQuantityException e) {
+            return e.getMessage();
+        }
+        return null;
+    }
+
+    @Override
+    public String getErrorOnPrice(Locale locale, String priceParam) {
+        if (getErrorOnEmptyParameter(priceParam)!= null)
+            return null;
+        try {
+            getPriceFromParam(locale, priceParam);
+        } catch (WrongItemQuantityException e) {
+            return e.getMessage();
         }
         return null;
     }
