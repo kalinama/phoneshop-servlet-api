@@ -1,7 +1,7 @@
 package com.es.phoneshop.web.servlets.pages.productDetails;
 
-import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.product.service.DefaultViewedProductsService;
 import com.es.phoneshop.model.product.service.ViewedProductsService;
@@ -35,7 +35,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         ViewedProductsUnit viewedProductsUnit = viewedProductsService.getViewedProductsUnit(session);
         viewedProductsService.addProductToViewed(viewedProductsUnit, id);
 
-        request.setAttribute(PRODUCT, productDao.getProduct(id));
+        request.setAttribute(PRODUCT, productDao.getById(id));
         request.setAttribute(VIEWED_PRODUCTS, viewedProductsService.getViewedProductsWithoutLast(viewedProductsUnit));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request,response);
     }

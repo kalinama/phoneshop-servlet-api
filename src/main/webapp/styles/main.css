@@ -49,6 +49,9 @@ text-align: right;
 color: black;
 font-size: 50;
 }
+.total {
+font-size: 15;
+}
 
 /* Page specific styles */
 body.product-list {

@@ -1,9 +1,10 @@
 package com.es.phoneshop.model.product.dao;
 
-import com.es.phoneshop.model.enums.SortOrder;
-import com.es.phoneshop.model.enums.SortParameter;
-import com.es.phoneshop.model.exceptions.ProductNotFoundException;
+import com.es.phoneshop.model.item.dao.ArrayListDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.enums.SortOrder;
+import com.es.phoneshop.model.product.enums.SortParameter;
+import com.es.phoneshop.model.product.exception.ProductNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,11 +45,11 @@ public class ArrayListProductDaoTest
         constructor.setAccessible(true);
         productDao = constructor.newInstance();
 
-        Field fieldProducts = ArrayListProductDao.class.getDeclaredField("products");
+        Field fieldProducts = ArrayListDao.class.getDeclaredField("items");
         fieldProducts.setAccessible(true);
         fieldProducts.set(productDao, testProductList);
 
-        Field fieldIdMaxValue = ArrayListProductDao.class.getDeclaredField("idMaxValue");
+        Field fieldIdMaxValue = ArrayListDao.class.getDeclaredField("idMaxValue");
         fieldIdMaxValue.setAccessible(true);
         fieldIdMaxValue.set(productDao, maxId);
         //testProductList.forEach(productDao::save);
@@ -57,7 +58,7 @@ public class ArrayListProductDaoTest
     @Test
     public void testGetProductByExistedId() throws ProductNotFoundException {
         Product testProduct = testProductList.get(0);
-        Product result = productDao.getProduct(testProduct.getId());
+        Product result = productDao.getById(testProduct.getId());
 
         assertEquals(testProduct, result);
     }
@@ -65,7 +66,7 @@ public class ArrayListProductDaoTest
     @Test(expected = ProductNotFoundException.class)
     public void testGetProductByNotExistedId() throws ProductNotFoundException {
         long notExistedId = maxId + 1;
-        productDao.getProduct(notExistedId);
+        productDao.getById(notExistedId);
     }
 
     @Test
@@ -76,7 +77,7 @@ public class ArrayListProductDaoTest
 
         assertNotEquals(testProductList.size(), oldSize);
         assertNotNull(product.getId());
-        assertEquals(product, productDao.getProduct(product.getId()));
+        assertEquals(product, productDao.getById(product.getId()));
     }
 
     @Test
@@ -87,7 +88,7 @@ public class ArrayListProductDaoTest
         productDao.save(product);
 
         assertEquals(testProductList.size(), oldSize);
-        assertEquals(product, productDao.getProduct(existedId));
+        assertEquals(product, productDao.getById(existedId));
     }
 
     @Test
@@ -98,7 +99,7 @@ public class ArrayListProductDaoTest
         productDao.save(product);
 
         assertNotEquals(testProductList.size(), oldSize);
-        assertEquals(product, productDao.getProduct(notExistedId));
+        assertEquals(product, productDao.getById(notExistedId));
     }
 
     @Test
@@ -165,7 +166,7 @@ public class ArrayListProductDaoTest
     public void testDeleteProductById() throws ProductNotFoundException {
         long idOfRemovableProduct = testProductList.get(0).getId();
         productDao.delete(idOfRemovableProduct);
-        productDao.getProduct(idOfRemovableProduct);
+        productDao.getById(idOfRemovableProduct);
     }
 
 }

@@ -1,8 +1,6 @@
 package com.es.phoneshop.web.servlets.pages.productDetails;
 
-import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.service.CartService;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
 import com.es.phoneshop.model.product.ViewedProductsUnit;
 import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.product.service.ViewedProductsService;

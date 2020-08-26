@@ -94,7 +94,7 @@ public class DefaultViewedProductsServiceTest {
     @Test
     public void addNewProductToViewedList(){
         Product product = new Product();
-        when(productDao.getProduct(anyLong())).thenReturn(product);
+        when(productDao.getById(anyLong())).thenReturn(product);
         productService.addProductToViewed(viewedProductsUnit, anyLong());
 
         assertEquals(viewedProductsUnit.getRecentlyViewedProductsList().get(0), product);
@@ -102,10 +102,10 @@ public class DefaultViewedProductsServiceTest {
 
     @Test
     public void addProductToViewedMaxSizeList(){
-        when(productDao.getProduct(anyLong())).thenReturn(new Product(4L,"iphone", "Apple iPhone", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"));
+        when(productDao.getById(anyLong())).thenReturn(new Product(4L,"iphone", "Apple iPhone", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"));
         productService.addProductToViewed(viewedProductsUnit, anyLong());
 
-        when(productDao.getProduct(anyLong())).thenReturn(new Product(5L,"iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg"));
+        when(productDao.getById(anyLong())).thenReturn(new Product(5L,"iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg"));
         productService.addProductToViewed(viewedProductsUnit, anyLong());
 
         assertEquals(viewedProductsUnit.getRecentlyViewedProductsList().size(),
@@ -131,7 +131,7 @@ public class DefaultViewedProductsServiceTest {
     {
         int initialSize = viewedProductsUnit.getRecentlyViewedProductsList().size();
         Product product = viewedProductsUnit.getRecentlyViewedProductsList().get(position);
-        when(productDao.getProduct(anyLong())).thenReturn(product);
+        when(productDao.getById(anyLong())).thenReturn(product);
         productService.addProductToViewed(viewedProductsUnit, product.getId());
 
         assertEquals(initialSize, viewedProductsUnit.getRecentlyViewedProductsList().size());
@@ -140,7 +140,7 @@ public class DefaultViewedProductsServiceTest {
 
     @Test
     public void getViewedProductsTest(){
-        when(productDao.getProduct(anyLong())).thenReturn(new Product());
+        when(productDao.getById(anyLong())).thenReturn(new Product());
         productService.addProductToViewed(viewedProductsUnit, anyLong());
         List<Product> result = productService.getViewedProducts(viewedProductsUnit);
 
@@ -151,7 +151,7 @@ public class DefaultViewedProductsServiceTest {
     @Test
     public void getViewedProductsWithoutLastTest(){
         Product product = new Product();
-        when(productDao.getProduct(anyLong())).thenReturn(product);
+        when(productDao.getById(anyLong())).thenReturn(product);
         productService.addProductToViewed(viewedProductsUnit, anyLong());
         List<Product> result = productService.getViewedProductsWithoutLast(viewedProductsUnit);
 

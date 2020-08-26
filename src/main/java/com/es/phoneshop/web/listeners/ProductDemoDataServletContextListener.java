@@ -18,7 +18,7 @@ public class ProductDemoDataServletContextListener implements ServletContextList
                                                                     // => can't mocking static method without PowerMockito
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        boolean insertDemoData = Boolean.valueOf(servletContextEvent.getServletContext().getInitParameter("insertDemoData"));
+        boolean insertDemoData = Boolean.parseBoolean(servletContextEvent.getServletContext().getInitParameter("insertDemoData"));
 
         if(insertDemoData) {
           // productDao = ArrayListProductDao.getInstance();

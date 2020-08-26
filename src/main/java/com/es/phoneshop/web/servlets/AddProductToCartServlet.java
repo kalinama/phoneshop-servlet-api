@@ -1,13 +1,13 @@
 package com.es.phoneshop.web.servlets;
 
 import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.exception.WrongItemQuantityException;
 import com.es.phoneshop.model.cart.service.CartService;
 import com.es.phoneshop.model.cart.service.DefaultCartService;
-import com.es.phoneshop.model.exceptions.OutOfStockException;
-import com.es.phoneshop.model.exceptions.WrongItemQuantityException;
+import com.es.phoneshop.model.services.dataprocessing.DefaultParamProcessingService;
+import com.es.phoneshop.model.services.dataprocessing.ParamProcessingService;
 import com.es.phoneshop.web.enums.ApplicationPages;
-import com.es.phoneshop.web.services.DefaultQuantityParamProcessingService;
-import com.es.phoneshop.web.services.QuantityParamProcessingService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -24,15 +24,15 @@ import static com.es.phoneshop.web.constants.ErrorAndSuccessMessageConstants.*;
 public class AddProductToCartServlet extends HttpServlet {
 
     private CartService cartService;
-    private QuantityParamProcessingService quantityParamService;
+    private ParamProcessingService paramProcessingService;
     private List<String> parameterNames;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cartService = DefaultCartService.getInstance();
-        quantityParamService = DefaultQuantityParamProcessingService.getInstance();
-        parameterNames = Arrays.asList(SORT, ORDER, QUERY); //specify parameters that must be in url after redirect
+        paramProcessingService = DefaultParamProcessingService.getInstance();
+        parameterNames = Arrays.asList(SORT, SORTING_ORDER, QUERY); //specify parameters that must be in url after redirect
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AddProductToCartServlet extends HttpServlet {
     private String getErrorMessageOnAddingToCart(HttpServletRequest request, String idParam, String quantityParam){
         int quantity;
         try {
-            quantity = quantityParamService.getNumberFromQuantityParam(request.getLocale(), quantityParam);
+            quantity = paramProcessingService.getQuantityFromParam(request.getLocale(), quantityParam);
         } catch (WrongItemQuantityException e) {
             return e.getMessage();
         }

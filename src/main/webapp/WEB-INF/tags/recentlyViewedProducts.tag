@@ -3,7 +3,7 @@
 <jsp:useBean id="viewedProducts" type="java.util.ArrayList" scope="request"/>
 
  <c:if test="${not empty viewedProducts}">
-    <p> <strong> <u> <font size="4" color="dimgray"> Recently viewed: </font> </u> </strong> </p>
+    <p> <strong> <u> <span style="font-size: medium; color: dimgray; "> Recently viewed: </span> </u> </strong> </p>
  </c:if>
  <table class="viewed-products-table">
      <c:forEach var="viewedProduct" items="${viewedProducts}">

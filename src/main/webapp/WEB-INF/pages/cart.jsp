@@ -57,14 +57,14 @@
                  </td>
                  <td>
                     <form method="post" action="${pageContext.servletContext.contextPath}/cart/delete-cart-item/${cartItem.product.id}">
-                        <button>Delete</button>
+                        <button>Delete from cart</button>
                     </form>
                   </td>
              </tr>
          </c:forEach>
          <tr bgcolor="#CCCFF">
-            <td/>
-            <td/>
+            <td></td>
+            <td></td>
             <td class="price">
                 Total Cost:
                 <br> <fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${cart.currency.symbol}"/>
@@ -72,13 +72,18 @@
             <td class="quantity">
                 Total quantity: ${cart.totalQuantity}
             </td>
-            <td/>
+            <td>
+                <form action="${pageContext.servletContext.contextPath}/checkout">
+                    <input type="submit" value="Proceed to Checkout" />
+                </form>
+            </td>
          </tr>
      </table>
 
       <form id="update" method="post" action="${pageContext.servletContext.contextPath}/cart">
-          <button>Update</button>
+          <button>Update cart</button>
       </form>
+
  </c:if>
 
  </tags:master>

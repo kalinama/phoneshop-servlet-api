@@ -1,4 +1,4 @@
-package com.es.phoneshop.model.exceptions;
+package com.es.phoneshop.model.cart.exception;
 
 public class WrongItemQuantityException extends RuntimeException {
 

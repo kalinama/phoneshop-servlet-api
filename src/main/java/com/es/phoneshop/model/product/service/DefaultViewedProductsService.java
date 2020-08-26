@@ -45,7 +45,7 @@ public class DefaultViewedProductsService implements ViewedProductsService {
     @Override
     public void addProductToViewed(ViewedProductsUnit viewedProductsUnit, Long productId){
         synchronized (viewedProductsUnit) {
-            Product product = productDao.getProduct(productId);
+            Product product = productDao.getById(productId);
             List<Product> viewedProducts = viewedProductsUnit.getRecentlyViewedProductsList();
             Optional<Product> existedProductInViewed = viewedProducts.stream()
                     .filter(product::equals)
