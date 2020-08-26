@@ -33,7 +33,7 @@
                  <tags:sortLink sort="price" order="desc"/>
              </td>
              <td class="quantity">Quantity</td>
-             <td/>
+             <td></td>
          </tr>
      </thead>
      <c:forEach var="product" items="${products}">
@@ -51,22 +51,20 @@
                      <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
                  </a>
              </td>
-             <form method="post" id="add" action="${pageContext.servletContext.contextPath}/cart/add-product/${product.id}"/>
-             <td>
-                <input class="quantity"  name="quantity"
-                value="${not empty param.wrongQuantityError and param.productId eq product.id ? param.quantity : 1}" />
-                <input type="hidden" name="pageCode" value="PLP" />
+             <form method="post" id="add" action="${pageContext.servletContext.contextPath}/cart/add-product/${product.id}">
+                 <td>
+                    <input class="quantity"  name="quantity"
+                    value="${not empty param.wrongQuantityError and param.productId eq product.id ? param.quantity : 1}" />
+                    <input type="hidden" name="pageCode" value="PLP" />
 
-                <c:set var="importantParams" value="${fn:split('sort,order,query', ',')}" />
-                <tags:hiddenParameters parameters="${importantParams}"/>
+                    <c:set var="importantParams" value="${fn:split('sort,order,query', ',')}" />
+                    <tags:hiddenParameters parameters="${importantParams}"/>
 
-                <c:if test="${not empty param.wrongQuantityError and param.productId eq product.id}">
-                    <div class="error"> ${param.wrongQuantityError} </div>
-                </c:if>
-             </td>
-             <td>
-                    <button>Add</button>
-             </td>
+                    <c:if test="${not empty param.wrongQuantityError and param.productId eq product.id}">
+                        <div class="error"> ${param.wrongQuantityError} </div>
+                    </c:if>
+                 </td>
+                 <td><button>Add</button></td>
              </form>
          </tr>
      </c:forEach>

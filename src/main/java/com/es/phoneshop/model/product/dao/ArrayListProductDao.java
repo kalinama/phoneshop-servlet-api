@@ -14,8 +14,6 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
 
     private static final String SEPARATOR = " ";
 
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
-
     private ArrayListProductDao() {
         super(Product.class);
     }
@@ -26,16 +24,6 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
 
     public static ArrayListProductDao getInstance() {
         return ArrayListProductDaoHolder.HOLDER_INSTANCE;
-    }
-
-    @Override
-    public Product getById(Long id) {
-        lock.readLock().lock();
-        try {
-            return super.getById(id);
-        } finally {
-            lock.readLock().unlock();
-        }
     }
 
     @Override
@@ -96,25 +84,4 @@ public class ArrayListProductDao extends ArrayListDao<Product> implements Produc
         return  quantityOfCompleteMatchedWords
                 + (double) quantityOfPartialMatchedWords / quantityOfWordInDescription;
     }
-
-    @Override
-    public void save(Product product) {
-        lock.writeLock().lock();
-        try {
-            super.save(product);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-        lock.writeLock().lock();
-        try {
-            super.delete(id);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
 }

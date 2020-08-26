@@ -63,8 +63,8 @@
              </tr>
          </c:forEach>
          <tr bgcolor="#CCCFF">
-            <td/>
-            <td/>
+            <td></td>
+            <td></td>
             <td class="price">
                 Total Cost:
                 <br> <fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${cart.currency.symbol}"/>
@@ -73,7 +73,6 @@
                 Total quantity: ${cart.totalQuantity}
             </td>
             <td>
-                </form>
                 <form action="${pageContext.servletContext.contextPath}/checkout">
                     <input type="submit" value="Proceed to Checkout" />
                 </form>

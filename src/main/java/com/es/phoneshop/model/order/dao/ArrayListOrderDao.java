@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ArrayListOrderDao extends ArrayListDao<Order> implements OrderDao{
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private ArrayListOrderDao() {
         super(Order.class);
@@ -20,16 +19,6 @@ public class ArrayListOrderDao extends ArrayListDao<Order> implements OrderDao{
 
     public static ArrayListOrderDao getInstance() {
         return ArrayListOrderDaoHolder.HOLDER_INSTANCE;
-    }
-
-    @Override
-    public Order getById(Long id) {
-        lock.readLock().lock();
-        try {
-            return super.getById(id);
-        } finally {
-            lock.readLock().unlock();
-        }
     }
 
     @Override
@@ -45,23 +34,4 @@ public class ArrayListOrderDao extends ArrayListDao<Order> implements OrderDao{
         }
     }
 
-    @Override
-    public void save(Order order) {
-        lock.writeLock().lock();
-        try {
-            super.save(order);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-        lock.writeLock().lock();
-        try {
-            super.delete(id);
-        } finally {
-            lock.writeLock().unlock();
-        }
-    }
 }

@@ -6,12 +6,15 @@ import com.es.phoneshop.model.item.enums.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public abstract class ArrayListDao<T extends IdentifiedItem> implements Dao<T> {
     
     protected List<T> items;
-    private long idMaxValue;
+    protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
+    private long idMaxValue;
     private Class<T> type;
 
     public ArrayListDao(Class<T> type){
@@ -21,17 +24,23 @@ public abstract class ArrayListDao<T extends IdentifiedItem> implements Dao<T> {
 
     @Override
     public T getById(Long id) {
+        lock.readLock().lock();
+        try {
             return items.stream()
                     .filter(item -> item.getId().equals(id))
                     .findAny()
                     .orElseThrow(() -> ItemNotFoundExceptionFactory.getException(
-                            ItemType.of(type), id)
-                    );
+                            ItemType.of(type), id));
+        } finally {
+                lock.readLock().unlock();
+            }
     }
 
     @Override
     public void save(T item) {
-            if (item.getId()!=null) {
+        lock.writeLock().lock();
+        try {
+            if (item.getId() != null) {
                 items.stream()
                         .filter(existedItem -> existedItem.getId().equals(item.getId()))
                         .findAny()
@@ -43,14 +52,21 @@ public abstract class ArrayListDao<T extends IdentifiedItem> implements Dao<T> {
                 item.setId(++idMaxValue);
 
             items.add(item);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     @Override
     public void delete(Long id) {
+        lock.writeLock().lock();
+        try {
             items.stream()
                     .filter(item -> item.getId().equals(id))
                     .findAny()
                     .ifPresent(ItemToRemove -> items.remove(ItemToRemove));
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
-
 }

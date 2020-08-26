@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<jsp:useBean id="order" scope="request" type="com.es.phoneshop.model.order.Order"/>
 
  <table>
      <thead>
@@ -45,7 +46,7 @@
             <br> <fmt:formatNumber value="${order.totalCost}" type="currency" currencySymbol="${order.currency.symbol}"/>
         </td>
         <td bgcolor="lightSteelBlue" class="quantity">
-            Total quantity: ${cart.totalQuantity}
+            Total quantity: ${order.totalQuantity}
         </td>
      </tr>
  </table>

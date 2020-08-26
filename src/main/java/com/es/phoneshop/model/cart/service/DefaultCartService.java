@@ -47,6 +47,8 @@ public class DefaultCartService implements CartService {
     public void clearCart(HttpSession httpSession) {
         final Object lock = httpSession.getId().intern();
         synchronized (lock) {
+            Cart cart = (Cart) httpSession.getAttribute(CART_SESSION_ATTRIBUTE);
+            cart.getItems().clear();
             httpSession.setAttribute(CART_SESSION_ATTRIBUTE, null);
         }
     }

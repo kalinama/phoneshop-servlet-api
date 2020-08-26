@@ -6,8 +6,8 @@
  <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
  <tags:master pageTitle="Product Price History">
 
- <h1> Price History <h1>
- <h2> ${product.description} <h2>
+ <h1> Price History </h1>
+ <h2> ${product.description} </h2>
 
  <table>
      <thead>

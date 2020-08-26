@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -56,6 +57,10 @@ public class ArrayListDaoTest {
         Field fieldIdMaxValue = ArrayListDao.class.getDeclaredField("idMaxValue");
         fieldIdMaxValue.setAccessible(true);
         fieldIdMaxValue.set(dao, maxId);
+
+        Field fieldLock= ArrayListDao.class.getDeclaredField("lock");
+        fieldLock.setAccessible(true);
+        fieldLock.set(dao, new ReentrantReadWriteLock());
     }
     
     @Test

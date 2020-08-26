@@ -6,21 +6,22 @@
  <jsp:useBean id="order" type="com.es.phoneshop.model.order.Order" scope="request"/>
  <jsp:useBean id="now" class="java.util.Date" scope="request"/>
  <tags:master pageTitle="Checkout page">
- <p/>
+ <p></p>
 
   <c:if test="${not empty orderErrors}">
-      <div class="error"> An error occurred! Order not placed. </div>
+      <div class="error"> An error occurred! Order not placed.}</div>
   </c:if>
 
  <tags:orderProductsTable/>
+ <br>
  <form method="post" action="${pageContext.servletContext.contextPath}/checkout">
     <table>
-        <tags:customerDataInputRow name="First Name" paramName="firstName"/>
-        <tags:customerDataInputRow name="Last Name" paramName="lastName"/>
+        <tags:customerDataInputRow name="First Name" paramName="firstName" orderErrors="${orderErrors}"/>
+        <tags:customerDataInputRow name="Last Name" paramName="lastName" orderErrors="${orderErrors}"/>
         <tr>
-            <td> Phone <font color="red">*</font> </td>
+            <td> Phone <span style="color: red; ">*</span> </td>
             <td>
-                <font size="3" color="grey"> +375-xx-xxx-xx-xx </font> </br>
+                <span style="font-size: small; color: grey; "> +375-xx-xxx-xx-xx </span>
                 <input type="tel" pattern="\+375[\-]?[0-9]{2}[\-]?[0-9]{3}[\-]?[0-9]{2}[\-]?[0-9]{2}"
                     name="phone" value="${param['phone']}" placeholder="+375-44-456-89-01"/>
                 <c:if test="${not empty orderErrors['phone']}">
@@ -29,7 +30,7 @@
             </td>
         </tr>
         <tr>
-            <td> Delivery date <font color="red">*</font> </td>
+            <td> Delivery date <span style="color: red; ">*</span> </td>
             <fmt:formatDate type="time" value="${now}" pattern="yyyy-MM-dd" var="dateNow"/>
             <td>
                 <input type="date" min="${dateNow}" name="deliveryDate"
@@ -39,9 +40,9 @@
                 </c:if>
             </td>
         </tr>
-        <tags:customerDataInputRow name="Delivery address" paramName="deliveryAddress"/>
+        <tags:customerDataInputRow name="Delivery address" paramName="deliveryAddress" orderErrors="${orderErrors}"/>
         <tr>
-            <td>Payment method<font color="red">*</font> </td>
+            <td>Payment method<span style="color: red; ">*</span> </td>
             <td>
                 <select name="paymentMethod">
                     <option disabled selected>Choose payment method</option>
@@ -55,7 +56,7 @@
             </td>
         </tr>
     </table>
-    </br>
+    <br/>
     <button>Place order</button>
   </form>
  </tags:master>

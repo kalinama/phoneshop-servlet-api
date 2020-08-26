@@ -9,11 +9,11 @@
  <tags:orderProductsTable/>
  <br>
     <table>
-        <tags:customerDataRow name="First Name" paramName="firstName"/>
-        <tags:customerDataRow name="Last Name" paramName="lastName"/>
-        <tags:customerDataRow name="Phone" paramName="phone"/>
-        <tags:customerDataRow name="Delivery date" paramName="deliveryDate"/>
-        <tags:customerDataRow name="Delivery address" paramName="deliveryAddress"/>
+        <tags:customerDataRow name="First Name" paramName="firstName" order="${order}"/>
+        <tags:customerDataRow name="Last Name" paramName="lastName" order="${order}"/>
+        <tags:customerDataRow name="Phone" paramName="phone" order="${order}"/>
+        <tags:customerDataRow name="Delivery date" paramName="deliveryDate" order="${order}"/>
+        <tags:customerDataRow name="Delivery address" paramName="deliveryAddress" order="${order}"/>
          <tr>
             <td>Payment method</td>
             <td>
@@ -21,5 +21,4 @@
             </td>
          </tr>
    </table>
-   </br>
  </tags:master>

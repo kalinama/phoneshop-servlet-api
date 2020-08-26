@@ -14,7 +14,7 @@
      <div class="error"> An error occurred! Product not added to cart. </div>
  </c:if>
  <p>
-    <strong> <font size="5"> ${product.description} </font> </strong>
+    <strong> <span style="font-size: large; "> ${product.description} </span> </strong>
  </p>
 
  <table>
